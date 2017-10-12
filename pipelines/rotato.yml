@@ -1,0 +1,51 @@
+resources: 
+- name: daily-rotate
+  type: time
+  source: 
+    interval: 24h
+
+- name: alpha-rotato
+  type: git
+  source:
+    uri: https://github.com/danjahner/alpha-rotato.git
+    branch: master
+
+jobs: 
+- name: rotate-database-credentials
+  serial_groups: 
+  - rotato
+  plan: 
+  - get: daily-rotate
+    trigger: true
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-credentials.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDS_TO_ROTATE:
+      - "/dan_director/cf-credhub/cc_database_password"
+      - "/dan_director/cf-credhub/diego_database_password"
+      - "/dan_director/cf-credhub/uaa_database_password"
+      - "/dan_director/cf-credhub/nats_password"
+
+- name: deploy-to-rotate
+  serial_groups: 
+  - rotato
+  plan: 
+  - get: daily-rotate
+    trigger: true
+    passed: 
+    - rotate-database-credentials
+  - get: alpha-rotato
+  - task: deploy-to-rotate
+    file: alpha-rotato/rotate-deploy.yml
+    params:
+      BOSH_ENVIRONMENT: ((director-addr))
+      BOSH_DEPLOYMENT: cf
+      BOSH_CA_CERT: ((dan_director_client.password))
+      BOSH_CLIENT: ((dan_director_client.username))
+      BOSH_CLIENT_SECRET: ((dan_director_client.password))
+
