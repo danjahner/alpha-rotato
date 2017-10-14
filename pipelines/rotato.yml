@@ -49,6 +49,8 @@ jobs:
       - "/dan_director/cf-credhub/etcd_peer_ca"
       - "/dan_director/cf-credhub/loggregator_ca"
       - "/dan_director/cf-credhub/router_ca"
+      - "/dan_director/cf-credhub/uaa_admin_client_secret"
+      - "/dan_director/cf-credhub/uaa_scim_users_admin_password"
 
 - name: rotate-uaa-client-secrets
   serial_groups: 
