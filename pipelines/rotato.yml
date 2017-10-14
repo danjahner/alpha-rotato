@@ -1,4 +1,9 @@
 resources: 
+- name: manual-rotate
+  type: time
+  source: 
+    interval: 1m
+
 - name: daily-rotate
   type: time
   source: 
@@ -11,10 +16,19 @@ resources:
     branch: master
 
 jobs: 
+- name: manual-rotate
+  plan: 
+  - get: manual-rotate
+    trigger: false
+
 - name: rotate-certificates
   serial_groups: 
   - rotato
   plan: 
+  - get: manual-rotate
+    trigger: true
+    passed: 
+    - manual-rotate
   - get: daily-rotate
     trigger: true
   - get: alpha-rotato
@@ -27,6 +41,14 @@ jobs:
       CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
       SIGNED_BY_TO_ROTATE:
       - "/dan_director/cf-credhub/uaa_ca"
+      - "/dan_director/cf-credhub/service_cf_internal_ca"
+      - "/dan_director/cf-credhub/credhub_ca"
+      - "/dan_director/cf-credhub/instance_identity_ca"
+      - "/dan_director/cf-credhub/etcd_ca"
+      - "/dan_director/cf-credhub/consul_agent_ca"
+      - "/dan_director/cf-credhub/etcd_peer_ca"
+      - "/dan_director/cf-credhub/loggregator_ca"
+      - "/dan_director/cf-credhub/router_ca"
 
 #- name: rotate-database-credentials
 #  serial_groups: 
@@ -52,6 +74,10 @@ jobs:
   serial_groups: 
   - rotato
   plan: 
+  - get: manual-rotate
+    trigger: true
+    passed: 
+    - rotate-certificates
   - get: daily-rotate
     trigger: true
     passed: 
