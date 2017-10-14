@@ -22,8 +22,6 @@ jobs:
     trigger: false
 
 - name: rotate-certificates
-  serial_groups: 
-  - rotato
   plan: 
   - get: manual-rotate
     trigger: true
@@ -53,8 +51,6 @@ jobs:
       - "/dan_director/cf-credhub/uaa_scim_users_admin_password"
 
 - name: rotate-uaa-client-secrets
-  serial_groups: 
-  - rotato
   plan: 
   - get: manual-rotate
     trigger: true
@@ -81,8 +77,6 @@ jobs:
       - "/dan_director/cf-credhub/uaa_clients_cc-routing_secret"
 
 - name: rotate-nats-password
-  serial_groups: 
-  - rotato
   plan: 
   - get: manual-rotate
     trigger: true
@@ -102,8 +96,6 @@ jobs:
       - "/dan_director/cf-credhub/nats_password"
 
 - name: rotate-diego-ssh-host-key
-  serial_groups: 
-  - rotato
   plan: 
   - get: manual-rotate
     trigger: true
@@ -123,8 +115,6 @@ jobs:
       - "/dan_director/cf-credhub/diego_ssh_proxy_host_key"
 
 - name: rotate-router-secrets
-  serial_groups: 
-  - rotato
   plan: 
   - get: manual-rotate
     trigger: true
@@ -145,8 +135,6 @@ jobs:
       - "/dan_director/cf-credhub/router_status_password"
 
 - name: rotate-cc-secrets
-  serial_groups: 
-  - rotato
   plan: 
   - get: manual-rotate
     trigger: true
@@ -168,8 +156,6 @@ jobs:
       - "/dan_director/cf-credhub/cc_internal_api_password"
 
 - name: rotate-blobstore-secrets
-  serial_groups: 
-  - rotato
   plan: 
   - get: manual-rotate
     trigger: true
@@ -190,8 +176,6 @@ jobs:
       - "/dan_director/cf-credhub/blobstore_admin_users_password"
 
 - name: rotate-dropsonde-secret
-  serial_groups: 
-  - rotato
   plan: 
   - get: manual-rotate
     trigger: true
@@ -211,8 +195,6 @@ jobs:
       - "/dan_director/cf-credhub/dropsonde_shared_secret"
 
 - name: deploy-to-rotate
-  serial_groups: 
-  - rotato
   plan: 
   - get: manual-rotate
     trigger: true
