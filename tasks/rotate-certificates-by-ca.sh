@@ -5,6 +5,7 @@ set -x -e
 credhub l 
 
 TOKEN="$(credhub --token)"
+echo "$CREDHUB_CA_CERT" > ca.pem
 
 echo $SIGNED_BY_TO_ROTATE | jq -r .[] | while read object; do
   echo "go"
@@ -12,7 +13,7 @@ echo $SIGNED_BY_TO_ROTATE | jq -r .[] | while read object; do
   -X POST \
   -H "authorization: ${TOKEN}" \
   -H 'content-type: application/json' \
-  -d "{\"signed_by\": \"${object}\"" \ 
-  -k
+  -d "{\"signed_by\": \"${object}\"}" \
+  --cacert ca.pem
 done
 
