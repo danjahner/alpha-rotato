@@ -101,6 +101,27 @@ jobs:
       CREDS_TO_ROTATE:
       - "/dan_director/cf-credhub/nats_password"
 
+- name: rotate-diego-ssh-host-key
+  serial_groups: 
+  - rotato
+  plan: 
+  - get: manual-rotate
+    trigger: true
+    passed: 
+    - manual-rotate
+  - get: daily-rotate
+    trigger: true
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-credentials.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDS_TO_ROTATE:
+      - "/dan_director/cf-credhub/diego_ssh_proxy_host_key"
+
 - name: deploy-to-rotate
   serial_groups: 
   - rotato
@@ -111,12 +132,14 @@ jobs:
     - rotate-certificates
     - rotate-uaa-client-secrets
     - rotate-nats-password
+    - rotate-diego-ssh-host-key
   - get: daily-rotate
     trigger: true
     passed: 
     - rotate-certificates
     - rotate-uaa-client-secrets
     - rotate-nats-password
+    - rotate-diego-ssh-host-key
   - get: alpha-rotato
   - task: deploy-to-rotate
     file: alpha-rotato/tasks/rotate-deploy.yml
