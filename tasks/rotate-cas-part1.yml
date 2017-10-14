@@ -9,7 +9,7 @@ inputs:
 - name: alpha-rotato
 
 run:
-  path: alpha-rotato/tasks/rotate-cas-step1.sh
+  path: alpha-rotato/tasks/rotate-cas-part1.sh
 
 params:
   CREDHUB_SERVER:
