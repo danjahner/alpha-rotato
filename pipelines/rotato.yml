@@ -144,6 +144,72 @@ jobs:
       - "/dan_director/cf-credhub/router_route_services_secret"
       - "/dan_director/cf-credhub/router_status_password"
 
+- name: rotate-cc-secrets
+  serial_groups: 
+  - rotato
+  plan: 
+  - get: manual-rotate
+    trigger: true
+    passed: 
+    - manual-rotate
+  - get: daily-rotate
+    trigger: true
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-credentials.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDS_TO_ROTATE:
+      - "/dan_director/cf-credhub/cc_bulk_api_password"
+      - "/dan_director/cf-credhub/cc_staging_upload_password"
+      - "/dan_director/cf-credhub/cc_internal_api_password"
+
+- name: rotate-blobstore-secrets
+  serial_groups: 
+  - rotato
+  plan: 
+  - get: manual-rotate
+    trigger: true
+    passed: 
+    - manual-rotate
+  - get: daily-rotate
+    trigger: true
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-credentials.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDS_TO_ROTATE:
+      - "/dan_director/cf-credhub/blobstore_secure_link_secret"
+      - "/dan_director/cf-credhub/blobstore_admin_users_password"
+
+- name: rotate-dropsonde-secret
+  serial_groups: 
+  - rotato
+  plan: 
+  - get: manual-rotate
+    trigger: true
+    passed: 
+    - manual-rotate
+  - get: daily-rotate
+    trigger: true
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-credentials.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDS_TO_ROTATE:
+      - "/dan_director/cf-credhub/dropsonde_shared_secret"
+
 - name: deploy-to-rotate
   serial_groups: 
   - rotato
@@ -156,6 +222,9 @@ jobs:
     - rotate-nats-password
     - rotate-diego-ssh-host-key
     - rotate-router-secrets
+    - rotate-cc-secrets
+    - rotate-blobstore-secrets
+    - rotate-dropsonde-secret
   - get: daily-rotate
     trigger: true
     passed: 
@@ -164,6 +233,9 @@ jobs:
     - rotate-nats-password
     - rotate-diego-ssh-host-key
     - rotate-router-secrets
+    - rotate-cc-secrets
+    - rotate-blobstore-secrets
+    - rotate-dropsonde-secret
   - get: alpha-rotato
   - task: deploy-to-rotate
     file: alpha-rotato/tasks/rotate-deploy.yml
