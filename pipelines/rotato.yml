@@ -50,25 +50,33 @@ jobs:
       - "/dan_director/cf-credhub/loggregator_ca"
       - "/dan_director/cf-credhub/router_ca"
 
-#- name: rotate-database-credentials
-#  serial_groups: 
-#  - rotato
-#  plan: 
-#  - get: daily-rotate
-#    trigger: true
-#  - get: alpha-rotato
-#  - task: rotate-credential
-#    file: alpha-rotato/tasks/rotate-credentials.yml
-#    params:
-#      CREDHUB_SERVER: ((director-addr)):8844
-#      CREDHUB_CLIENT: ((dan_director_client.username))
-#      CREDHUB_SECRET: ((dan_director_client.password))
-#      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
-#      CREDS_TO_ROTATE:
-#      - "/dan_director/cf-credhub/cc_database_password"
-#      - "/dan_director/cf-credhub/diego_database_password"
-#      - "/dan_director/cf-credhub/uaa_database_password"
-#      - "/dan_director/cf-credhub/nats_password"
+- name: rotate-uaa-client-secrets
+  serial_groups: 
+  - rotato
+  plan: 
+  - get: manual-rotate
+    trigger: true
+    passed: 
+    - manual-rotate
+  - get: daily-rotate
+    trigger: true
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-credentials.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDS_TO_ROTATE:
+      - "/dan_director/cf-credhub/uaa_clients_tcp_router_secret"
+      - "/dan_director/cf-credhub/uaa_clients_tcp_emitter_secret"
+      - "/dan_director/cf-credhub/uaa_clients_ssh-proxy_secret"
+      - "/dan_director/cf-credhub/uaa_clients_gorouter_secret"
+      - "/dan_director/cf-credhub/uaa_clients_doppler_secret"
+      - "/dan_director/cf-credhub/uaa_clients_cloud_controller_username_lookup_secret"
+      - "/dan_director/cf-credhub/uaa_clients_cc-service-dashboards_secret"
+      - "/dan_director/cf-credhub/uaa_clients_cc-routing_secret"
 
 - name: deploy-to-rotate
   serial_groups: 
@@ -78,10 +86,12 @@ jobs:
     trigger: true
     passed: 
     - rotate-certificates
+    - rotate-uaa-client-secrets
   - get: daily-rotate
     trigger: true
     passed: 
     - rotate-certificates
+    - rotate-uaa-client-secrets
   - get: alpha-rotato
   - task: deploy-to-rotate
     file: alpha-rotato/tasks/rotate-deploy.yml
