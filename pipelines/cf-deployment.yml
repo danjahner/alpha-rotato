@@ -5,12 +5,6 @@ resource_types:
     repository: cloudfoundry/bosh-deployment-resource
 
 resources: 
-# - name: alpha-rotato
-#   type: git
-#   source:
-#     uri: https://github.com/danjahner/alpha-rotato.git
-#     branch: master
-
 - name: cf-deployment
   type: git
   source:
@@ -34,4 +28,4 @@ jobs:
     params:
       manifest: cf-deployment/cf-deployment.yml
       vars: 
-        system_domain: diego.security.cf-app.com
+        system_domain: ((system_domain))

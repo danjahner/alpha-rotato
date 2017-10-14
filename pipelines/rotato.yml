@@ -1,13 +1,36 @@
+groups: 
+- name: basic-credentials
+  jobs: 
+  - manual-rotate-basics
+  - rotate-certificates
+  - rotate-uaa-client-secrets
+  - rotate-nats-password
+  - rotate-diego-ssh-host-key
+  - rotate-router-secrets
+  - rotate-cc-secrets
+  - rotate-blobstore-secrets
+  - rotate-dropsonde-secret
+  - deploy-to-rotate-basics
+- name: ca-certificates
+  jobs: 
+  - manual-rotate-cas
+  - rotate-cas-p1
+  - deploy-to-rotate-cas-p1
+  - rotate-cas-p2
+  - deploy-to-rotate-cas-p2
+  - rotate-cas-p3
+  - deploy-to-rotate-cas-p3
+
 resources: 
-- name: manual-rotate
+- name: manual-rotate-basics
   type: time
   source: 
     interval: 1m
 
-- name: daily-rotate
+- name: manual-rotate-cas
   type: time
   source: 
-    interval: 24h
+    interval: 1m
 
 - name: alpha-rotato
   type: git
@@ -16,19 +39,17 @@ resources:
     branch: master
 
 jobs: 
-- name: manual-rotate
+- name: manual-rotate-basics
   plan: 
-  - get: manual-rotate
+  - get: manual-rotate-basics
     trigger: false
 
 - name: rotate-certificates
   plan: 
-  - get: manual-rotate
+  - get: manual-rotate-basics
     trigger: true
     passed: 
-    - manual-rotate
-  - get: daily-rotate
-    trigger: true
+    - manual-rotate-basics
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-certificates-by-ca.yml
@@ -47,17 +68,13 @@ jobs:
       - "/dan_director/cf-credhub/etcd_peer_ca"
       - "/dan_director/cf-credhub/loggregator_ca"
       - "/dan_director/cf-credhub/router_ca"
-      - "/dan_director/cf-credhub/uaa_admin_client_secret"
-      - "/dan_director/cf-credhub/uaa_scim_users_admin_password"
 
 - name: rotate-uaa-client-secrets
   plan: 
-  - get: manual-rotate
+  - get: manual-rotate-basics
     trigger: true
     passed: 
-    - manual-rotate
-  - get: daily-rotate
-    trigger: true
+    - manual-rotate-basics
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
@@ -75,15 +92,15 @@ jobs:
       - "/dan_director/cf-credhub/uaa_clients_cloud_controller_username_lookup_secret"
       - "/dan_director/cf-credhub/uaa_clients_cc-service-dashboards_secret"
       - "/dan_director/cf-credhub/uaa_clients_cc-routing_secret"
+      - "/dan_director/cf-credhub/uaa_admin_client_secret"
+      - "/dan_director/cf-credhub/uaa_scim_users_admin_password"
 
 - name: rotate-nats-password
   plan: 
-  - get: manual-rotate
+  - get: manual-rotate-basics
     trigger: true
     passed: 
-    - manual-rotate
-  - get: daily-rotate
-    trigger: true
+    - manual-rotate-basics
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
@@ -97,12 +114,10 @@ jobs:
 
 - name: rotate-diego-ssh-host-key
   plan: 
-  - get: manual-rotate
+  - get: manual-rotate-basics
     trigger: true
     passed: 
-    - manual-rotate
-  - get: daily-rotate
-    trigger: true
+    - manual-rotate-basics
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
@@ -116,12 +131,10 @@ jobs:
 
 - name: rotate-router-secrets
   plan: 
-  - get: manual-rotate
+  - get: manual-rotate-basics
     trigger: true
     passed: 
-    - manual-rotate
-  - get: daily-rotate
-    trigger: true
+    - manual-rotate-basics
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
@@ -136,12 +149,10 @@ jobs:
 
 - name: rotate-cc-secrets
   plan: 
-  - get: manual-rotate
+  - get: manual-rotate-basics
     trigger: true
     passed: 
-    - manual-rotate
-  - get: daily-rotate
-    trigger: true
+    - manual-rotate-basics
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
@@ -157,12 +168,10 @@ jobs:
 
 - name: rotate-blobstore-secrets
   plan: 
-  - get: manual-rotate
+  - get: manual-rotate-basics
     trigger: true
     passed: 
-    - manual-rotate
-  - get: daily-rotate
-    trigger: true
+    - manual-rotate-basics
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
@@ -177,12 +186,10 @@ jobs:
 
 - name: rotate-dropsonde-secret
   plan: 
-  - get: manual-rotate
+  - get: manual-rotate-basics
     trigger: true
     passed: 
-    - manual-rotate
-  - get: daily-rotate
-    trigger: true
+    - manual-rotate-basics
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
@@ -194,9 +201,9 @@ jobs:
       CREDS_TO_ROTATE:
       - "/dan_director/cf-credhub/dropsonde_shared_secret"
 
-- name: deploy-to-rotate
+- name: deploy-to-rotate-basics
   plan: 
-  - get: manual-rotate
+  - get: manual-rotate-basics
     trigger: true
     passed: 
     - rotate-certificates
@@ -207,17 +214,134 @@ jobs:
     - rotate-cc-secrets
     - rotate-blobstore-secrets
     - rotate-dropsonde-secret
-  - get: daily-rotate
+  - get: alpha-rotato
+  - task: deploy-to-rotate-basics
+    file: alpha-rotato/tasks/rotate-deploy.yml
+    params:
+      BOSH_ENVIRONMENT: ((director-addr))
+      BOSH_DEPLOYMENT: cf-credhub
+      BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
+      BOSH_CLIENT: ((dan_director_client.username))
+      BOSH_CLIENT_SECRET: ((dan_director_client.password))
+
+- name: manual-rotate-cas
+  plan: 
+  - get: manual-rotate-cas
+    trigger: false
+
+- name: rotate-cas-p1
+  plan: 
+  - get: manual-rotate-cas
     trigger: true
     passed: 
-    - rotate-certificates
-    - rotate-uaa-client-secrets
-    - rotate-nats-password
-    - rotate-diego-ssh-host-key
-    - rotate-router-secrets
-    - rotate-cc-secrets
-    - rotate-blobstore-secrets
-    - rotate-dropsonde-secret
+    - manual-rotate-cas
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-cas-part1.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CAS_TO_ROTATE:
+      - "/dan_director/cf-credhub/uaa_ca"
+      - "/dan_director/cf-credhub/service_cf_internal_ca"
+      - "/dan_director/cf-credhub/credhub_ca"
+      - "/dan_director/cf-credhub/instance_identity_ca"
+      - "/dan_director/cf-credhub/etcd_ca"
+      - "/dan_director/cf-credhub/consul_agent_ca"
+      - "/dan_director/cf-credhub/etcd_peer_ca"
+      - "/dan_director/cf-credhub/loggregator_ca"
+      - "/dan_director/cf-credhub/router_ca"
+
+- name: deploy-to-rotate-cas-p1
+  plan: 
+  - get: manual-rotate-cas
+    trigger: true
+    passed: 
+    - rotate-cas-p1
+  - get: alpha-rotato
+  - task: deploy-to-rotate
+    file: alpha-rotato/tasks/rotate-deploy.yml
+    params:
+      BOSH_ENVIRONMENT: ((director-addr))
+      BOSH_DEPLOYMENT: cf-credhub
+      BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
+      BOSH_CLIENT: ((dan_director_client.username))
+      BOSH_CLIENT_SECRET: ((dan_director_client.password))
+
+- name: rotate-cas-p2
+  plan: 
+  - get: manual-rotate-cas
+    trigger: true
+    passed: 
+    - deploy-to-rotate-cas-p1
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-certificates-by-ca.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      SIGNED_BY_TO_ROTATE:
+      - "/dan_director/cf-credhub/uaa_ca"
+      - "/dan_director/cf-credhub/service_cf_internal_ca"
+      - "/dan_director/cf-credhub/credhub_ca"
+      - "/dan_director/cf-credhub/instance_identity_ca"
+      - "/dan_director/cf-credhub/etcd_ca"
+      - "/dan_director/cf-credhub/consul_agent_ca"
+      - "/dan_director/cf-credhub/etcd_peer_ca"
+      - "/dan_director/cf-credhub/loggregator_ca"
+      - "/dan_director/cf-credhub/router_ca"
+
+- name: deploy-to-rotate-cas-p2
+  plan: 
+  - get: manual-rotate-cas
+    trigger: true
+    passed: 
+    - rotate-cas-p2
+  - get: alpha-rotato
+  - task: deploy-to-rotate
+    file: alpha-rotato/tasks/rotate-deploy.yml
+    params:
+      BOSH_ENVIRONMENT: ((director-addr))
+      BOSH_DEPLOYMENT: cf-credhub
+      BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
+      BOSH_CLIENT: ((dan_director_client.username))
+      BOSH_CLIENT_SECRET: ((dan_director_client.password))
+
+- name: rotate-cas-p3
+  plan: 
+  - get: manual-rotate-cas
+    trigger: true
+    passed: 
+    - deploy-to-rotate-cas-p2
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-cas-part3.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CAS_TO_ROTATE:
+      - "/dan_director/cf-credhub/uaa_ca"
+      - "/dan_director/cf-credhub/service_cf_internal_ca"
+      - "/dan_director/cf-credhub/credhub_ca"
+      - "/dan_director/cf-credhub/instance_identity_ca"
+      - "/dan_director/cf-credhub/etcd_ca"
+      - "/dan_director/cf-credhub/consul_agent_ca"
+      - "/dan_director/cf-credhub/etcd_peer_ca"
+      - "/dan_director/cf-credhub/loggregator_ca"
+      - "/dan_director/cf-credhub/router_ca"
+
+- name: deploy-to-rotate-cas-p3
+  plan: 
+  - get: manual-rotate-cas
+    trigger: true
+    passed: 
+    - rotate-cas-p3
   - get: alpha-rotato
   - task: deploy-to-rotate
     file: alpha-rotato/tasks/rotate-deploy.yml

@@ -8,7 +8,6 @@ TOKEN="$(credhub --token)"
 echo "$CREDHUB_CA_CERT" > ca.pem
 
 echo $SIGNED_BY_TO_ROTATE | jq -r .[] | while read object; do
-  echo "go"
   curl https://${CREDHUB_SERVER}/api/v1/bulk-regenerate \
   -X POST \
   -H "authorization: ${TOKEN}" \
