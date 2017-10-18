@@ -59,13 +59,13 @@ jobs:
       CREDHUB_SECRET: ((dan_director_client.password))
       CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
       SIGNED_BY_TO_ROTATE:
-      - "/dan_director/cf/uaa_ca"
-      - "/dan_director/cf/router_ca"
-      - "/dan_director/cf/loggregator_ca"
-      - "/dan_director/cf/consul_agent_ca"
-      - "/dan_director/cf/service_cf_internal_ca"
-      - "/dan_director/cf/network_policy_ca"
-      - "/dan_director/cf/silk_ca"
+      - "/((director_name))/((deployment_name))/uaa_ca"
+      - "/((director_name))/((deployment_name))/router_ca"
+      - "/((director_name))/((deployment_name))/loggregator_ca"
+      - "/((director_name))/((deployment_name))/consul_agent_ca"
+      - "/((director_name))/((deployment_name))/service_cf_internal_ca"
+      - "/((director_name))/((deployment_name))/network_policy_ca"
+      - "/((director_name))/((deployment_name))/silk_ca"
 
 - name: rotate-uaa-client-secrets
   plan: 
@@ -82,19 +82,19 @@ jobs:
       CREDHUB_SECRET: ((dan_director_client.password))
       CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
       CREDS_TO_ROTATE:
-      - "/dan_director/cf/uaa_clients_tcp_router_secret"
-      - "/dan_director/cf/uaa_clients_tcp_emitter_secret"
-      - "/dan_director/cf/uaa_clients_ssh-proxy_secret"
-      - "/dan_director/cf/uaa_clients_gorouter_secret"
-      - "/dan_director/cf/uaa_clients_doppler_secret"
-      - "/dan_director/cf/uaa_clients_cloud_controller_username_lookup_secret"
-      - "/dan_director/cf/uaa_clients_cc-service-dashboards_secret"
-      - "/dan_director/cf/uaa_clients_cc-routing_secret"
-      - "/dan_director/cf/uaa_clients_network_policy_secret"
-      - "/dan_director/cf/uaa_clients_cc_service_key_client_secret"
-      - "/dan_director/cf/uaa_clients_routing_api_client_secret"
-      - "/dan_director/cf/uaa_admin_client_secret"
-      - "/dan_director/cf/cf_admin_password"
+      - "/((director_name))/((deployment_name))/uaa_clients_tcp_router_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_tcp_emitter_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_ssh-proxy_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_gorouter_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_doppler_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_cloud_controller_username_lookup_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_cc-service-dashboards_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_cc-routing_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_network_policy_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_cc_service_key_client_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_routing_api_client_secret"
+      - "/((director_name))/((deployment_name))/uaa_admin_client_secret"
+      - "/((director_name))/((deployment_name))/cf_admin_password"
 
 - name: rotate-nats-password
   plan: 
@@ -111,7 +111,7 @@ jobs:
       CREDHUB_SECRET: ((dan_director_client.password))
       CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
       CREDS_TO_ROTATE:
-      - "/dan_director/cf/nats_password"
+      - "/((director_name))/((deployment_name))/nats_password"
 
 - name: rotate-diego-ssh-host-key
   plan: 
@@ -128,7 +128,7 @@ jobs:
       CREDHUB_SECRET: ((dan_director_client.password))
       CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
       CREDS_TO_ROTATE:
-      - "/dan_director/cf/diego_ssh_proxy_host_key"
+      - "/((director_name))/((deployment_name))/diego_ssh_proxy_host_key"
 
 - name: rotate-router-secrets
   plan: 
@@ -145,8 +145,8 @@ jobs:
       CREDHUB_SECRET: ((dan_director_client.password))
       CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
       CREDS_TO_ROTATE:
-      - "/dan_director/cf/router_route_services_secret"
-      - "/dan_director/cf/router_status_password"
+      - "/((director_name))/((deployment_name))/router_route_services_secret"
+      - "/((director_name))/((deployment_name))/router_status_password"
 
 - name: rotate-cc-secrets
   plan: 
@@ -163,9 +163,9 @@ jobs:
       CREDHUB_SECRET: ((dan_director_client.password))
       CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
       CREDS_TO_ROTATE:
-      - "/dan_director/cf/cc_bulk_api_password"
-      - "/dan_director/cf/cc_staging_upload_password"
-      - "/dan_director/cf/cc_internal_api_password"
+      - "/((director_name))/((deployment_name))/cc_bulk_api_password"
+      - "/((director_name))/((deployment_name))/cc_staging_upload_password"
+      - "/((director_name))/((deployment_name))/cc_internal_api_password"
 
 - name: rotate-blobstore-secrets
   plan: 
@@ -182,8 +182,8 @@ jobs:
       CREDHUB_SECRET: ((dan_director_client.password))
       CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
       CREDS_TO_ROTATE:
-      - "/dan_director/cf/blobstore_secure_link_secret"
-      - "/dan_director/cf/blobstore_admin_users_password"
+      - "/((director_name))/((deployment_name))/blobstore_secure_link_secret"
+      - "/((director_name))/((deployment_name))/blobstore_admin_users_password"
 
 - name: rotate-dropsonde-secret
   plan: 
@@ -200,7 +200,7 @@ jobs:
       CREDHUB_SECRET: ((dan_director_client.password))
       CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
       CREDS_TO_ROTATE:
-      - "/dan_director/cf/dropsonde_shared_secret"
+      - "/((director_name))/((deployment_name))/dropsonde_shared_secret"
 
 - name: deploy-to-rotate-basics
   plan: 
@@ -220,7 +220,7 @@ jobs:
     file: alpha-rotato/tasks/rotate-deploy.yml
     params:
       BOSH_ENVIRONMENT: ((director-addr))
-      BOSH_DEPLOYMENT: cf
+      BOSH_DEPLOYMENT: ((deployment_name))
       BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
       BOSH_CLIENT: ((dan_director_client.username))
       BOSH_CLIENT_SECRET: ((dan_director_client.password))
@@ -245,13 +245,13 @@ jobs:
       CREDHUB_SECRET: ((dan_director_client.password))
       CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
       CAS_TO_ROTATE:
-      - "/dan_director/cf/uaa_ca"
-      - "/dan_director/cf/router_ca"
-      - "/dan_director/cf/loggregator_ca"
-      - "/dan_director/cf/consul_agent_ca"
-      - "/dan_director/cf/service_cf_internal_ca"
-      - "/dan_director/cf/network_policy_ca"
-      - "/dan_director/cf/silk_ca"
+      - "/((director_name))/((deployment_name))/uaa_ca"
+      - "/((director_name))/((deployment_name))/router_ca"
+      - "/((director_name))/((deployment_name))/loggregator_ca"
+      - "/((director_name))/((deployment_name))/consul_agent_ca"
+      - "/((director_name))/((deployment_name))/service_cf_internal_ca"
+      - "/((director_name))/((deployment_name))/network_policy_ca"
+#      - "/((director_name))/((deployment_name))/silk_ca"
 
 - name: deploy-to-rotate-cas-p1
   plan: 
@@ -264,7 +264,7 @@ jobs:
     file: alpha-rotato/tasks/rotate-deploy.yml
     params:
       BOSH_ENVIRONMENT: ((director-addr))
-      BOSH_DEPLOYMENT: cf
+      BOSH_DEPLOYMENT: ((deployment_name))
       BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
       BOSH_CLIENT: ((dan_director_client.username))
       BOSH_CLIENT_SECRET: ((dan_director_client.password))
@@ -284,13 +284,13 @@ jobs:
       CREDHUB_SECRET: ((dan_director_client.password))
       CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
       SIGNED_BY_TO_ROTATE:
-      - "/dan_director/cf/uaa_ca"
-      - "/dan_director/cf/router_ca"
-      - "/dan_director/cf/loggregator_ca"
-      - "/dan_director/cf/consul_agent_ca"
-      - "/dan_director/cf/service_cf_internal_ca"
-      - "/dan_director/cf/network_policy_ca"
-      - "/dan_director/cf/silk_ca"
+      - "/((director_name))/((deployment_name))/uaa_ca"
+      - "/((director_name))/((deployment_name))/router_ca"
+      - "/((director_name))/((deployment_name))/loggregator_ca"
+      - "/((director_name))/((deployment_name))/consul_agent_ca"
+      - "/((director_name))/((deployment_name))/service_cf_internal_ca"
+      - "/((director_name))/((deployment_name))/network_policy_ca"
+#      - "/((director_name))/((deployment_name))/silk_ca"
 
 - name: deploy-to-rotate-cas-p2
   plan: 
@@ -303,7 +303,7 @@ jobs:
     file: alpha-rotato/tasks/rotate-deploy.yml
     params:
       BOSH_ENVIRONMENT: ((director-addr))
-      BOSH_DEPLOYMENT: cf
+      BOSH_DEPLOYMENT: ((deployment_name))
       BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
       BOSH_CLIENT: ((dan_director_client.username))
       BOSH_CLIENT_SECRET: ((dan_director_client.password))
@@ -323,13 +323,13 @@ jobs:
       CREDHUB_SECRET: ((dan_director_client.password))
       CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
       CAS_TO_ROTATE:
-      - "/dan_director/cf/uaa_ca"
-      - "/dan_director/cf/router_ca"
-      - "/dan_director/cf/loggregator_ca"
-      - "/dan_director/cf/consul_agent_ca"
-      - "/dan_director/cf/service_cf_internal_ca"
-      - "/dan_director/cf/network_policy_ca"
-      - "/dan_director/cf/silk_ca"
+      - "/((director_name))/((deployment_name))/uaa_ca"
+      - "/((director_name))/((deployment_name))/router_ca"
+      - "/((director_name))/((deployment_name))/loggregator_ca"
+      - "/((director_name))/((deployment_name))/consul_agent_ca"
+      - "/((director_name))/((deployment_name))/service_cf_internal_ca"
+      - "/((director_name))/((deployment_name))/network_policy_ca"
+#      - "/((director_name))/((deployment_name))/silk_ca"
 
 - name: deploy-to-rotate-cas-p3
   plan: 
@@ -342,7 +342,7 @@ jobs:
     file: alpha-rotato/tasks/rotate-deploy.yml
     params:
       BOSH_ENVIRONMENT: ((director-addr))
-      BOSH_DEPLOYMENT: cf
+      BOSH_DEPLOYMENT: ((deployment_name))
       BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
       BOSH_CLIENT: ((dan_director_client.username))
       BOSH_CLIENT_SECRET: ((dan_director_client.password))
