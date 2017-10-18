@@ -10,6 +10,7 @@ groups:
   - rotate-cc-secrets
   - rotate-blobstore-secrets
   - rotate-dropsonde-secret
+  - rotate-database-users
   - deploy-to-rotate-basics
 - name: ca-certificates
   jobs: 
@@ -184,6 +185,29 @@ jobs:
       CREDS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/blobstore_secure_link_secret"
       - "/((director_name))/((deployment_name))/blobstore_admin_users_password"
+
+- name: rotate-database-users
+  plan: 
+  - get: manual-rotate-basics
+    trigger: true
+    passed: 
+    - manual-rotate-basics
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/generate_users.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      USERS_TO_GENERATE:
+      - "/((director_name))/((deployment_name))/cc_database"
+      - "/((director_name))/((deployment_name))/diego_database"
+      - "/((director_name))/((deployment_name))/network_connectivity_database"
+      - "/((director_name))/((deployment_name))/network_policy_database"
+      - "/((director_name))/((deployment_name))/routing_api_database"
+      - "/((director_name))/((deployment_name))/uaa_database"
+      - "/((director_name))/((deployment_name))/locket_database"
 
 - name: rotate-dropsonde-secret
   plan: 
