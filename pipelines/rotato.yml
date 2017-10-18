@@ -194,7 +194,7 @@ jobs:
     - manual-rotate-basics
   - get: alpha-rotato
   - task: rotate-credential
-    file: alpha-rotato/tasks/generate_users.yml
+    file: alpha-rotato/tasks/generate-users.yml
     params:
       CREDHUB_SERVER: ((director-addr)):8844
       CREDHUB_CLIENT: ((dan_director_client.username))

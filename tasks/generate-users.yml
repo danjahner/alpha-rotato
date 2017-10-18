@@ -9,7 +9,7 @@ inputs:
 - name: alpha-rotato
 
 run:
-  path: alpha-rotato/tasks/generate_users.sh
+  path: alpha-rotato/tasks/generate-users.sh
 
 params:
   CREDHUB_SERVER:
