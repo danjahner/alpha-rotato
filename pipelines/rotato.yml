@@ -22,6 +22,13 @@ groups:
   - deploy-to-rotate-cas-p2
   - rotate-cas-p3
   - deploy-to-rotate-cas-p3
+- name: consul-encrypt-key
+  jobs: 
+  - manual-rotate-consul-keys
+  - rotate-consul-p1
+  - deploy-to-rotate-consul-p1
+  - rotate-consul-p2
+  - deploy-to-rotate-consul-p2
 
 resources: 
 - name: manual-rotate-basics
@@ -30,6 +37,11 @@ resources:
     interval: 1m
 
 - name: manual-rotate-cas
+  type: time
+  source: 
+    interval: 1m
+
+- name: manual-rotate-consul-keys
   type: time
   source: 
     interval: 1m
@@ -395,3 +407,73 @@ jobs:
       BOSH_CLIENT: ((dan_director_client.username))
       BOSH_CLIENT_SECRET: ((dan_director_client.password))
 
+- name: manual-rotate-consul-keys
+  plan: 
+  - get: manual-rotate-consul-keys
+    trigger: false
+
+- name: rotate-consul-p1
+  plan: 
+  - get: manual-rotate-consul-keys
+    trigger: true
+    passed: 
+    - manual-rotate-consul-keys
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-consul-keys-part1.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      KEYS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/consul_encrypt_key"
+
+- name: deploy-to-rotate-consul-p1
+  plan: 
+  - get: manual-rotate-consul-keys
+    trigger: true
+    passed: 
+    - rotate-consul-p1
+  - get: alpha-rotato
+  - task: deploy-to-rotate
+    file: alpha-rotato/tasks/rotate-deploy.yml
+    params:
+      BOSH_ENVIRONMENT: ((director-addr))
+      BOSH_DEPLOYMENT: ((deployment_name))
+      BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
+      BOSH_CLIENT: ((dan_director_client.username))
+      BOSH_CLIENT_SECRET: ((dan_director_client.password))
+
+- name: rotate-consul-p2
+  plan: 
+  - get: manual-rotate-consul-keys
+    trigger: true
+    passed: 
+    - deploy-to-rotate-consul-p1
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-consul-keys-part1.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      KEYS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/consul_encrypt_key"
+
+- name: deploy-to-rotate-consul-p2
+  plan: 
+  - get: manual-rotate-consul-keys
+    trigger: true
+    passed: 
+    - rotate-consul-p2
+  - get: alpha-rotato
+  - task: deploy-to-rotate
+    file: alpha-rotato/tasks/rotate-deploy.yml
+    params:
+      BOSH_ENVIRONMENT: ((director-addr))
+      BOSH_DEPLOYMENT: ((deployment_name))
+      BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
+      BOSH_CLIENT: ((dan_director_client.username))
+      BOSH_CLIENT_SECRET: ((dan_director_client.password))
