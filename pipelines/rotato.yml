@@ -73,6 +73,11 @@ resources:
   source: 
     interval: 1m
 
+- name: manual-rotate-bbs-keys
+  type: time
+  source: 
+    interval: 1m
+
 - name: alpha-rotato
   type: git
   source:
