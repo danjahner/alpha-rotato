@@ -9,7 +9,7 @@ inputs:
 - name: alpha-rotato
 
 run:
-  path: alpha-rotato/tasks/rotate-jwt-key-part1.sh
+  path: alpha-rotato/tasks/rotate-jwt-keys-part1.sh
 
 params:
   CREDHUB_SERVER:
