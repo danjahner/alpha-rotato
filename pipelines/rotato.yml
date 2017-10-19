@@ -11,6 +11,7 @@ groups:
   - rotate-blobstore-secrets
   - rotate-dropsonde-secret
   - rotate-database-users
+  - rotate-mysql-secrets
   - deploy-to-rotate-basics
 - name: ca-certificates
   jobs: 
@@ -186,6 +187,44 @@ jobs:
       - "/((director_name))/((deployment_name))/blobstore_secure_link_secret"
       - "/((director_name))/((deployment_name))/blobstore_admin_users_password"
 
+- name: rotate-dropsonde-secret
+  plan: 
+  - get: manual-rotate-basics
+    trigger: true
+    passed: 
+    - manual-rotate-basics
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-credentials.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/dropsonde_shared_secret"
+
+- name: rotate-mysql-secrets
+  plan: 
+  - get: manual-rotate-basics
+    trigger: true
+    passed: 
+    - manual-rotate-basics
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-credentials.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/cf_mysql_mysql_admin_password"
+      - "/((director_name))/((deployment_name))/cf_mysql_mysql_cluster_health_password"
+      - "/((director_name))/((deployment_name))/cf_mysql_mysql_galera_healthcheck_endpoint_password"
+      - "/((director_name))/((deployment_name))/cf_mysql_mysql_galera_healthcheck_password"
+      - "/((director_name))/((deployment_name))/cf_mysql_proxy_api_password"
+
 - name: rotate-database-users
   plan: 
   - get: manual-rotate-basics
@@ -209,23 +248,6 @@ jobs:
       - "/((director_name))/((deployment_name))/uaa_database"
       - "/((director_name))/((deployment_name))/locket_database"
 
-- name: rotate-dropsonde-secret
-  plan: 
-  - get: manual-rotate-basics
-    trigger: true
-    passed: 
-    - manual-rotate-basics
-  - get: alpha-rotato
-  - task: rotate-credential
-    file: alpha-rotato/tasks/rotate-credentials.yml
-    params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
-      CREDS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/dropsonde_shared_secret"
-
 - name: deploy-to-rotate-basics
   plan: 
   - get: manual-rotate-basics
@@ -239,6 +261,7 @@ jobs:
     - rotate-cc-secrets
     - rotate-blobstore-secrets
     - rotate-dropsonde-secret
+    - rotate-mysql-secrets
     - rotate-database-users
   - get: alpha-rotato
   - task: deploy-to-rotate-basics
@@ -276,7 +299,7 @@ jobs:
       - "/((director_name))/((deployment_name))/consul_agent_ca"
       - "/((director_name))/((deployment_name))/service_cf_internal_ca"
       - "/((director_name))/((deployment_name))/network_policy_ca"
-#      - "/((director_name))/((deployment_name))/silk_ca"
+      - "/((director_name))/((deployment_name))/silk_ca"
 
 - name: deploy-to-rotate-cas-p1
   plan: 
@@ -315,7 +338,7 @@ jobs:
       - "/((director_name))/((deployment_name))/consul_agent_ca"
       - "/((director_name))/((deployment_name))/service_cf_internal_ca"
       - "/((director_name))/((deployment_name))/network_policy_ca"
-#      - "/((director_name))/((deployment_name))/silk_ca"
+      - "/((director_name))/((deployment_name))/silk_ca"
 
 - name: deploy-to-rotate-cas-p2
   plan: 
@@ -354,7 +377,7 @@ jobs:
       - "/((director_name))/((deployment_name))/consul_agent_ca"
       - "/((director_name))/((deployment_name))/service_cf_internal_ca"
       - "/((director_name))/((deployment_name))/network_policy_ca"
-#      - "/((director_name))/((deployment_name))/silk_ca"
+      - "/((director_name))/((deployment_name))/silk_ca"
 
 - name: deploy-to-rotate-cas-p3
   plan: 
