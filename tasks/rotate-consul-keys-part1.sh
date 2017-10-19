@@ -11,7 +11,7 @@ echo $KEYS_TO_ROTATE | jq -r .[] | while read object; do
   NEWKEY="$(credhub r -n $object --output-json | jq -r .value)"
   NEWKEYID="$(credhub g -n $object --output-json | jq -r .id)"
 
-  credhub s -t json -n "${object}-list" -v "{\"list\":[\"${NEWKEY}\",\"${OLDKEY}\"]}" > /dev/null
+  credhub s -t json -n "${object}_list" -v "{\"list\":[\"${NEWKEY}\",\"${OLDKEY}\"]}" > /dev/null
 
   printf "Rotating ${object}\n  Existing Value: ${OLDKEYID}\n  New Value: ${NEWKEYID}\n\n"
 
