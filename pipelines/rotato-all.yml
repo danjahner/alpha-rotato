@@ -1,0 +1,424 @@
+properties: 
+  deploy_config: &deploy_config 
+    BOSH_ENVIRONMENT: ((director-addr))
+    BOSH_DEPLOYMENT: ((deployment_name))
+    BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
+    BOSH_CLIENT: ((dan_director_client.username))
+    BOSH_CLIENT_SECRET: ((dan_director_client.password))
+
+resources: 
+- name: manual-rotate-all
+  type: time
+  source: 
+    interval: 1m
+
+- name: alpha-rotato
+  type: git
+  source:
+    uri: https://github.com/danjahner/alpha-rotato.git
+    branch: master
+
+jobs: 
+- name: manual-rotate-all
+  plan: 
+  - get: manual-rotate-all
+    trigger: false
+
+- name: rotate-uaa-client-secrets
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - manual-rotate-all
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-credentials.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/uaa_clients_tcp_router_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_tcp_emitter_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_ssh-proxy_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_gorouter_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_doppler_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_cloud_controller_username_lookup_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_cc-service-dashboards_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_cc-routing_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_network_policy_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_cc_service_key_client_secret"
+      - "/((director_name))/((deployment_name))/uaa_clients_routing_api_client_secret"
+      - "/((director_name))/((deployment_name))/uaa_admin_client_secret"
+      - "/((director_name))/((deployment_name))/cf_admin_password"
+
+- name: rotate-nats-password
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - manual-rotate-all
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-credentials.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/nats_password"
+
+- name: rotate-diego-ssh-host-key
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - manual-rotate-all
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-credentials.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/diego_ssh_proxy_host_key"
+
+- name: rotate-router-secrets
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - manual-rotate-all
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-credentials.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/router_route_services_secret"
+      - "/((director_name))/((deployment_name))/router_status_password"
+
+- name: rotate-cc-secrets
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - manual-rotate-all
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-credentials.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/cc_bulk_api_password"
+      - "/((director_name))/((deployment_name))/cc_staging_upload_password"
+      - "/((director_name))/((deployment_name))/cc_internal_api_password"
+
+- name: rotate-blobstore-secrets
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - manual-rotate-all
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-credentials.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/blobstore_secure_link_secret"
+      - "/((director_name))/((deployment_name))/blobstore_admin_users_password"
+
+- name: rotate-dropsonde-secret
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - manual-rotate-all
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-credentials.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/dropsonde_shared_secret"
+
+- name: rotate-mysql-secrets
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - manual-rotate-all
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-credentials.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/cf_mysql_mysql_admin_password"
+      - "/((director_name))/((deployment_name))/cf_mysql_mysql_cluster_health_password"
+      - "/((director_name))/((deployment_name))/cf_mysql_mysql_galera_healthcheck_endpoint_password"
+      - "/((director_name))/((deployment_name))/cf_mysql_mysql_galera_healthcheck_password"
+      - "/((director_name))/((deployment_name))/cf_mysql_proxy_api_password"
+
+- name: rotate-database-users
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - manual-rotate-all
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/generate-users.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      USERS_TO_GENERATE:
+      - "/((director_name))/((deployment_name))/cc_database"
+      - "/((director_name))/((deployment_name))/diego_database"
+      - "/((director_name))/((deployment_name))/network_connectivity_database"
+      - "/((director_name))/((deployment_name))/network_policy_database"
+      - "/((director_name))/((deployment_name))/routing_api_database"
+      - "/((director_name))/((deployment_name))/uaa_database"
+      - "/((director_name))/((deployment_name))/locket_database"
+
+- name: rotate-cas-p1
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - manual-rotate-all
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-cas-part1.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CAS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/uaa_ca"
+      - "/((director_name))/((deployment_name))/router_ca"
+      - "/((director_name))/((deployment_name))/loggregator_ca"
+      - "/((director_name))/((deployment_name))/consul_agent_ca"
+      - "/((director_name))/((deployment_name))/service_cf_internal_ca"
+      - "/((director_name))/((deployment_name))/network_policy_ca"
+      - "/((director_name))/((deployment_name))/silk_ca"
+
+- name: rotate-consul-p1
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - manual-rotate-all
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-consul-keys-part1.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      KEYS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/consul_encrypt_key"
+
+- name: rotate-jwt-keys-p1
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - manual-rotate-all
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-jwt-keys-part1.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      KEYS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/uaa_jwt_signing_key"
+
+- name: rotate-bbs-keys-p1
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - manual-rotate-all
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-bbs-keys-part1.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      KEYS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/diego_bbs_encryption_keys_passphrase"
+
+- name: deploy-to-rotate-part1
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - rotate-uaa-client-secrets
+    - rotate-nats-password
+    - rotate-diego-ssh-host-key
+    - rotate-router-secrets
+    - rotate-cc-secrets
+    - rotate-blobstore-secrets
+    - rotate-dropsonde-secret
+    - rotate-mysql-secrets
+    - rotate-database-users
+    - rotate-cas-p1
+    - rotate-consul-p1
+    - rotate-jwt-keys-p1
+    - rotate-bbs-keys-p1
+  - get: alpha-rotato
+  - task: deploy-to-rotate-basics
+    file: alpha-rotato/tasks/rotate-deploy.yml
+    params: *deploy_config
+
+- name: rotate-cas-p2
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - deploy-to-rotate-part1
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-certificates-by-ca.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      SIGNED_BY_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/uaa_ca"
+      - "/((director_name))/((deployment_name))/router_ca"
+      - "/((director_name))/((deployment_name))/loggregator_ca"
+      - "/((director_name))/((deployment_name))/consul_agent_ca"
+      - "/((director_name))/((deployment_name))/service_cf_internal_ca"
+      - "/((director_name))/((deployment_name))/network_policy_ca"
+      - "/((director_name))/((deployment_name))/silk_ca"
+
+- name: rotate-consul-p2
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - deploy-to-rotate-part1
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-consul-keys-part2.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      KEYS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/consul_encrypt_key"
+
+- name: rotate-jwt-keys-p2
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - deploy-to-rotate-part1
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-jwt-keys-part2.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      KEYS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/uaa_jwt_signing_key"
+
+- name: rotate-bbs-keys-p2
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - deploy-to-rotate-part1
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-bbs-keys-part2.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      KEYS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/diego_bbs_encryption_keys_passphrase"
+
+- name: deploy-to-rotate-part2
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - rotate-cas-p2
+    - rotate-consul-p2
+    - rotate-jwt-keys-p2
+    - rotate-bbs-keys-p2
+  - get: alpha-rotato
+  - task: deploy-to-rotate-basics
+    file: alpha-rotato/tasks/rotate-deploy.yml
+    params: *deploy_config
+
+- name: rotate-cas-p3
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - deploy-to-rotate-part2
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-cas-part3.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CAS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/uaa_ca"
+      - "/((director_name))/((deployment_name))/router_ca"
+      - "/((director_name))/((deployment_name))/loggregator_ca"
+      - "/((director_name))/((deployment_name))/consul_agent_ca"
+      - "/((director_name))/((deployment_name))/service_cf_internal_ca"
+      - "/((director_name))/((deployment_name))/network_policy_ca"
+      - "/((director_name))/((deployment_name))/silk_ca"
+
+- name: deploy-to-rotate-part3
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - rotate-cas-p3
+  - get: alpha-rotato
+  - task: deploy-to-rotate-basics
+    file: alpha-rotato/tasks/rotate-deploy.yml
+    params: *deploy_config
+
