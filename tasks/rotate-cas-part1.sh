@@ -25,7 +25,7 @@ echo $CAS_TO_ROTATE | jq -r .[] | while read object; do
 
   STACKEDID="$(./credhub g -n $object --output-json | jq -r .id)"
   
-  printf "Rotating ${object}\n  Existing Value: ${OLDCAID}\n  New Value: ${NEWCAID}\n  Stacked Value: ${STACKEDID}\n"
+  printf "Rotating ${object}\n  Existing Value: ${OLDCAID}\n  New Value: ${NEWCAID}\n  Stacked Value: ${STACKEDID}\n\n"
  
 done
 

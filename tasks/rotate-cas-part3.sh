@@ -20,7 +20,7 @@ echo $CAS_TO_ROTATE | jq -r .[] | while read object; do
   #Hackily unset the value to remove the prior certificate
   ./credhub set --type certificate --name $object --certificate "$(./credhub g --id $NEWCAID --output-json | jq -r .value.certificate)" --private "$(./credhub g --id $NEWCAID --output-json | jq -r .value.private_key)" > /dev/null
 
-  printf "Removing old CA for ${object}\n  Stacked Value: ${STACKEDID}\n  New Value: ${NEWCAID}\n"
+  printf "Removing old CA for ${object}\n  Stacked Value: ${STACKEDID}\n  New Value: ${NEWCAID}\n\n"
 
 done
 
