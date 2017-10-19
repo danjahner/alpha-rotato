@@ -44,6 +44,13 @@ groups:
   - deploy-to-rotate-jwt-p1
   - rotate-jwt-keys-p2
   - deploy-to-rotate-jwt-p2
+- name: bbs-keys
+  jobs: 
+  - manual-rotate-bbs-keys
+  - rotate-bbs-keys-p1
+  - deploy-to-rotate-bbs-p1
+  - rotate-bbs-keys-p2
+  - deploy-to-rotate-bbs-p2
 
 resources: 
 - name: manual-rotate-basics
@@ -524,6 +531,67 @@ jobs:
     trigger: true
     passed: 
     - rotate-jwt-keys-p2
+  - get: alpha-rotato
+  - task: deploy-to-rotate
+    file: alpha-rotato/tasks/rotate-deploy.yml
+    params: *deploy_config
+
+- name: manual-rotate-bbs-keys
+  plan: 
+  - get: manual-rotate-bbs-keys
+    trigger: false
+
+- name: rotate-bbs-keys-p1
+  plan: 
+  - get: manual-rotate-bbs-keys
+    trigger: true
+    passed: 
+    - manual-rotate-bbs-keys
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-bbs-keys-part1.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      KEYS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/diego_bbs_encryption_keys_passphrase"
+
+- name: deploy-to-rotate-bbs-p1
+  plan: 
+  - get: manual-rotate-bbs-keys
+    trigger: true
+    passed: 
+    - rotate-bbs-keys-p1
+  - get: alpha-rotato
+  - task: deploy-to-rotate
+    file: alpha-rotato/tasks/rotate-deploy.yml
+    params: *deploy_config
+
+- name: rotate-bbs-keys-p2
+  plan: 
+  - get: manual-rotate-bbs-keys
+    trigger: true
+    passed: 
+    - deploy-to-rotate-bbs-p1
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-bbs-keys-part2.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      KEYS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/diego_bbs_encryption_keys_passphrase"
+
+- name: deploy-to-rotate-bbs-p2
+  plan: 
+  - get: manual-rotate-bbs-keys
+    trigger: true
+    passed: 
+    - rotate-bbs-keys-p2
   - get: alpha-rotato
   - task: deploy-to-rotate
     file: alpha-rotato/tasks/rotate-deploy.yml
