@@ -4,7 +4,7 @@ A pipeline that hackily rotates your CF deployment credentials.
 
 ### Credential List
 
-List based on cf-deployment at commit [98c1a7](https://github.com/cloudfoundry/cf-deployment/tree/98c1a7ecd8443832b14175d56083dfd4386cbcb9)
+List based on cf-deployment at commit [98c1a7](https://github.com/cloudfoundry/cf-deployment/tree/98c1a7ecd8443832b14175d56083dfd4386cbcb9) without any ops files.
 
 | Name                                                  | Rotation Method    | Downtime?   |
 |-------------------------------------------------------|--------------------|-----------  |
@@ -24,10 +24,10 @@ List based on cf-deployment at commit [98c1a7](https://github.com/cloudfoundry/c
 | cc_tls                                                | [Single Deploy][1] | Probably No  |
 | cf_admin_password                                     | [Single Deploy][1] | Probably Yes |
 | cf_mysql_mysql_admin_password                         | [Single Deploy][1] | Probably Yes |
-| cf_mysql_mysql_cluster_health_password                | ?                  |     ?        |
-| cf_mysql_mysql_galera_healthcheck_endpoint_password   | ?                  |     ?        |
-| cf_mysql_mysql_galera_healthcheck_password            | ?                  |     ?        |
-| cf_mysql_proxy_api_password                           | ?                  |     ?        |
+| cf_mysql_mysql_cluster_health_password                | [Single Deploy][1] | Probably Yes |
+| cf_mysql_mysql_galera_healthcheck_endpoint_password   | [Single Deploy][1] | Probably Yes |
+| cf_mysql_mysql_galera_healthcheck_password            | [Single Deploy][1] | Probably Yes |
+| cf_mysql_proxy_api_password                           | [Single Deploy][1] | Probably Yes |
 | consul_agent                                          | [Single Deploy][1] | Probably No  |
 | consul_agent_ca                                       | [Three Stage][4]   | Probably No  |
 | consul_encrypt_key                                    | [Three Stage][4]   | Probably No  |
@@ -105,7 +105,11 @@ This method creates a new user with the appropriate access, then a second phase 
 
 #### Two Stage
 
+This method provides a gradual rotation where step 1 adds a new value and step two removes the old value. This gradual process avoids a state where the source and consumers have mismatched values.
+
 #### Three Stage
+
+This method mostly applies to CA certificate rotation. Step 1 provides an additional trusted CA, step 2 provides new certificates based on that CA, step 3 removes the prior CA from trust.
 
 #### None
 
