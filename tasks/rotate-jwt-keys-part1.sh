@@ -16,7 +16,8 @@ echo $KEYS_TO_ROTATE | jq -r .[] | while read object; do
   "active-key": {"signingKey":${NEWKEY}},
   "inactive-key": {"signingKey":${OLDKEY}}
 }
-EOF)"
+EOF
+)"
 
   credhub s -t json -n "${object}_object" -v "${JSON}" > /dev/null
 
