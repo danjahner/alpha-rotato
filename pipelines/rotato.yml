@@ -1,3 +1,11 @@
+properties: 
+  deploy_config: &deploy_config 
+    BOSH_ENVIRONMENT: ((director-addr))
+    BOSH_DEPLOYMENT: ((deployment_name))
+    BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
+    BOSH_CLIENT: ((dan_director_client.username))
+    BOSH_CLIENT_SECRET: ((dan_director_client.password))
+
 groups: 
 - name: basic-credentials
   jobs: 
@@ -22,13 +30,20 @@ groups:
   - deploy-to-rotate-cas-p2
   - rotate-cas-p3
   - deploy-to-rotate-cas-p3
-- name: consul-encrypt-key
+- name: consul-encrypt-keys
   jobs: 
   - manual-rotate-consul-keys
   - rotate-consul-p1
   - deploy-to-rotate-consul-p1
   - rotate-consul-p2
   - deploy-to-rotate-consul-p2
+- name: jwt-keys
+  jobs: 
+  - manual-rotate-jwt-keys
+  - rotate-jwt-keys-p1
+  - deploy-to-rotate-jwt-p1
+  - rotate-jwt-keys-p2
+  - deploy-to-rotate-jwt-p2
 
 resources: 
 - name: manual-rotate-basics
@@ -42,6 +57,11 @@ resources:
     interval: 1m
 
 - name: manual-rotate-consul-keys
+  type: time
+  source: 
+    interval: 1m
+
+- name: manual-rotate-jwt-keys
   type: time
   source: 
     interval: 1m
@@ -278,12 +298,7 @@ jobs:
   - get: alpha-rotato
   - task: deploy-to-rotate-basics
     file: alpha-rotato/tasks/rotate-deploy.yml
-    params:
-      BOSH_ENVIRONMENT: ((director-addr))
-      BOSH_DEPLOYMENT: ((deployment_name))
-      BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
-      BOSH_CLIENT: ((dan_director_client.username))
-      BOSH_CLIENT_SECRET: ((dan_director_client.password))
+    params: *deploy_config
 
 - name: manual-rotate-cas
   plan: 
@@ -322,12 +337,7 @@ jobs:
   - get: alpha-rotato
   - task: deploy-to-rotate
     file: alpha-rotato/tasks/rotate-deploy.yml
-    params:
-      BOSH_ENVIRONMENT: ((director-addr))
-      BOSH_DEPLOYMENT: ((deployment_name))
-      BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
-      BOSH_CLIENT: ((dan_director_client.username))
-      BOSH_CLIENT_SECRET: ((dan_director_client.password))
+    params: *deploy_config
 
 - name: rotate-cas-p2
   plan: 
@@ -361,12 +371,7 @@ jobs:
   - get: alpha-rotato
   - task: deploy-to-rotate
     file: alpha-rotato/tasks/rotate-deploy.yml
-    params:
-      BOSH_ENVIRONMENT: ((director-addr))
-      BOSH_DEPLOYMENT: ((deployment_name))
-      BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
-      BOSH_CLIENT: ((dan_director_client.username))
-      BOSH_CLIENT_SECRET: ((dan_director_client.password))
+    params: *deploy_config
 
 - name: rotate-cas-p3
   plan: 
@@ -400,12 +405,7 @@ jobs:
   - get: alpha-rotato
   - task: deploy-to-rotate
     file: alpha-rotato/tasks/rotate-deploy.yml
-    params:
-      BOSH_ENVIRONMENT: ((director-addr))
-      BOSH_DEPLOYMENT: ((deployment_name))
-      BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
-      BOSH_CLIENT: ((dan_director_client.username))
-      BOSH_CLIENT_SECRET: ((dan_director_client.password))
+    params: *deploy_config
 
 - name: manual-rotate-consul-keys
   plan: 
@@ -438,12 +438,7 @@ jobs:
   - get: alpha-rotato
   - task: deploy-to-rotate
     file: alpha-rotato/tasks/rotate-deploy.yml
-    params:
-      BOSH_ENVIRONMENT: ((director-addr))
-      BOSH_DEPLOYMENT: ((deployment_name))
-      BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
-      BOSH_CLIENT: ((dan_director_client.username))
-      BOSH_CLIENT_SECRET: ((dan_director_client.password))
+    params: *deploy_config
 
 - name: rotate-consul-p2
   plan: 
@@ -453,7 +448,7 @@ jobs:
     - deploy-to-rotate-consul-p1
   - get: alpha-rotato
   - task: rotate-credential
-    file: alpha-rotato/tasks/rotate-consul-keys-part1.yml
+    file: alpha-rotato/tasks/rotate-consul-keys-part2.yml
     params:
       CREDHUB_SERVER: ((director-addr)):8844
       CREDHUB_CLIENT: ((dan_director_client.username))
@@ -471,9 +466,66 @@ jobs:
   - get: alpha-rotato
   - task: deploy-to-rotate
     file: alpha-rotato/tasks/rotate-deploy.yml
+    params: *deploy_config
+
+- name: manual-rotate-jwt-keys
+  plan: 
+  - get: manual-rotate-jwt-keys
+    trigger: false
+
+- name: rotate-jwt-keys-p1
+  plan: 
+  - get: manual-rotate-jwt-keys
+    trigger: true
+    passed: 
+    - manual-rotate-jwt-keys
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-jwt-keys-part1.yml
     params:
-      BOSH_ENVIRONMENT: ((director-addr))
-      BOSH_DEPLOYMENT: ((deployment_name))
-      BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
-      BOSH_CLIENT: ((dan_director_client.username))
-      BOSH_CLIENT_SECRET: ((dan_director_client.password))
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      KEYS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/uaa_jwt_signing_key"
+
+- name: deploy-to-rotate-jwt-p1
+  plan: 
+  - get: manual-rotate-jwt-keys
+    trigger: true
+    passed: 
+    - rotate-jwt-keys-p1
+  - get: alpha-rotato
+  - task: deploy-to-rotate
+    file: alpha-rotato/tasks/rotate-deploy.yml
+    params: *deploy_config
+
+- name: rotate-jwt-keys-p2
+  plan: 
+  - get: manual-rotate-jwt-keys
+    trigger: true
+    passed: 
+    - deploy-to-rotate-jwt-p1
+  - get: alpha-rotato
+  - task: rotate-credential
+    file: alpha-rotato/tasks/rotate-jwt-keys-part2.yml
+    params:
+      CREDHUB_SERVER: ((director-addr)):8844
+      CREDHUB_CLIENT: ((dan_director_client.username))
+      CREDHUB_SECRET: ((dan_director_client.password))
+      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      KEYS_TO_ROTATE:
+      - "/((director_name))/((deployment_name))/uaa_jwt_signing_key"
+
+- name: deploy-to-rotate-jwt-p2
+  plan: 
+  - get: manual-rotate-jwt-keys
+    trigger: true
+    passed: 
+    - rotate-jwt-keys-p2
+  - get: alpha-rotato
+  - task: deploy-to-rotate
+    file: alpha-rotato/tasks/rotate-deploy.yml
+    params: *deploy_config
+
