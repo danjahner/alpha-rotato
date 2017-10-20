@@ -10,7 +10,7 @@ tar xvf credhub-linux-1.5.0-beta.46.tgz
 echo $KEYS_TO_ROTATE | jq -r .[] | while read object; do
   OLDKEYID="$(./credhub g -n $object --versions 2 --output-json | jq -r .versions[1].id)"
 
-  NEWKEY="$(./credhub r -n $object --output-json | jq -r .value.private_key)"
+  NEWKEY="$(./credhub g -n $object --output-json | jq -r .value.private_key)"
   NEWKEYID="$(./credhub g -n $object --output-json | jq -r .id)"
 
   ./credhub s -t json -n "${object}_object" -v "{\"active-key\":{\"signingKey\":\"${NEWKEY}\"}}" > /dev/null
