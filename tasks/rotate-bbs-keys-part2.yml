@@ -9,7 +9,7 @@ inputs:
 - name: alpha-rotato
 
 run:
-  path: alpha-rotato/tasks/rotate-bbs-keys-part1.sh
+  path: alpha-rotato/tasks/rotate-bbs-keys-part2.sh
 
 params:
   CREDHUB_SERVER:
