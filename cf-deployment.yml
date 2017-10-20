@@ -62,8 +62,7 @@ instance_groups:
         agent:
           mode: server
           domain: cf.internal
-        encrypt_keys:
-        - "((consul_encrypt_key))"
+        encrypt_keys: "((consul_encrypt_key_list.list))"
         agent_cert: "((consul_agent.certificate))"
         agent_key: "((consul_agent.private_key))"
         ca_cert: "((consul_agent_ca.certificate))"
@@ -271,10 +270,8 @@ instance_groups:
     properties:
       diego:
         bbs:
-          active_key_label: key-2016-06
-          encryption_keys:
-          - label: key-2016-06
-            passphrase: "((diego_bbs_encryption_keys_passphrase))"
+          active_key_label: ((diego_bbs_encryption_keys_passphrase_name))
+          encryption_keys: ((diego_bbs_encryption_keys_passphrase_object.list))
           sql:
             db_host: sql-db.service.cf.internal
             db_port: 3306
@@ -402,10 +399,8 @@ instance_groups:
             - scim.write
         jwt:
           policy:
-            active_key_id: key-1
-            keys:
-              key-1:
-                signingKey: "((uaa_jwt_signing_key.private_key))"
+            active_key_id: active-key
+            keys: ((uaa_jwt_signing_key_object))
         clients:
           cc_routing:
             authorities: routing.router_groups.read
