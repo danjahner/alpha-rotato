@@ -12,6 +12,11 @@ resources:
   source: 
     interval: 1m
 
+- name: auto-rotate-all
+  type: time
+  source: 
+    interval: 2h
+
 - name: alpha-rotato
   type: git
   source:
@@ -30,6 +35,8 @@ jobs:
     trigger: true
     passed: 
     - manual-rotate-all
+  - get: auto-rotate-all
+    trigger: true
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
@@ -59,6 +66,8 @@ jobs:
     trigger: true
     passed: 
     - manual-rotate-all
+  - get: auto-rotate-all
+    trigger: true
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
@@ -76,6 +85,8 @@ jobs:
     trigger: true
     passed: 
     - manual-rotate-all
+  - get: auto-rotate-all
+    trigger: true
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
@@ -93,6 +104,8 @@ jobs:
     trigger: true
     passed: 
     - manual-rotate-all
+  - get: auto-rotate-all
+    trigger: true
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
@@ -111,6 +124,8 @@ jobs:
     trigger: true
     passed: 
     - manual-rotate-all
+  - get: auto-rotate-all
+    trigger: true
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
@@ -130,6 +145,8 @@ jobs:
     trigger: true
     passed: 
     - manual-rotate-all
+  - get: auto-rotate-all
+    trigger: true
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
@@ -148,6 +165,8 @@ jobs:
     trigger: true
     passed: 
     - manual-rotate-all
+  - get: auto-rotate-all
+    trigger: true
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
@@ -165,6 +184,8 @@ jobs:
     trigger: true
     passed: 
     - manual-rotate-all
+  - get: auto-rotate-all
+    trigger: true
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
@@ -186,6 +207,8 @@ jobs:
     trigger: true
     passed: 
     - manual-rotate-all
+  - get: auto-rotate-all
+    trigger: true
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/generate-users.yml
@@ -209,6 +232,8 @@ jobs:
     trigger: true
     passed: 
     - manual-rotate-all
+  - get: auto-rotate-all
+    trigger: true
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-cas-part1.yml
@@ -232,6 +257,8 @@ jobs:
     trigger: true
     passed: 
     - manual-rotate-all
+  - get: auto-rotate-all
+    trigger: true
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-consul-keys-part1.yml
@@ -249,6 +276,8 @@ jobs:
     trigger: true
     passed: 
     - manual-rotate-all
+  - get: auto-rotate-all
+    trigger: true
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-jwt-keys-part1.yml
@@ -266,6 +295,8 @@ jobs:
     trigger: true
     passed: 
     - manual-rotate-all
+  - get: auto-rotate-all
+    trigger: true
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-bbs-keys-part1.yml
@@ -295,6 +326,22 @@ jobs:
     - rotate-consul-p1
     - rotate-jwt-keys-p1
     - rotate-bbs-keys-p1
+  - get: auto-rotate-all
+    trigger: true
+    passed: 
+    - rotate-uaa-client-secrets
+    - rotate-nats-password
+    - rotate-diego-ssh-host-key
+    - rotate-router-secrets
+    - rotate-cc-secrets
+    - rotate-blobstore-secrets
+    - rotate-dropsonde-secret
+    - rotate-mysql-secrets
+    - rotate-database-users
+    - rotate-cas-p1
+    - rotate-consul-p1
+    - rotate-jwt-keys-p1
+    - rotate-bbs-keys-p1
   - get: alpha-rotato
   - task: deploy-to-rotate-basics
     file: alpha-rotato/tasks/rotate-deploy.yml
@@ -303,6 +350,10 @@ jobs:
 - name: rotate-cas-p2
   plan: 
   - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - deploy-to-rotate-part1
+  - get: auto-rotate-all
     trigger: true
     passed: 
     - deploy-to-rotate-part1
@@ -329,6 +380,10 @@ jobs:
     trigger: true
     passed: 
     - deploy-to-rotate-part1
+  - get: auto-rotate-all
+    trigger: true
+    passed: 
+    - deploy-to-rotate-part1
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-consul-keys-part2.yml
@@ -346,6 +401,10 @@ jobs:
     trigger: true
     passed: 
     - deploy-to-rotate-part1
+  - get: auto-rotate-all
+    trigger: true
+    passed: 
+    - deploy-to-rotate-part1
   - get: alpha-rotato
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-jwt-keys-part2.yml
@@ -360,6 +419,10 @@ jobs:
 - name: rotate-bbs-keys-p2
   plan: 
   - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - deploy-to-rotate-part1
+  - get: auto-rotate-all
     trigger: true
     passed: 
     - deploy-to-rotate-part1
@@ -383,6 +446,13 @@ jobs:
     - rotate-consul-p2
     - rotate-jwt-keys-p2
     - rotate-bbs-keys-p2
+  - get: auto-rotate-all
+    trigger: true
+    passed: 
+    - rotate-cas-p2
+    - rotate-consul-p2
+    - rotate-jwt-keys-p2
+    - rotate-bbs-keys-p2
   - get: alpha-rotato
   - task: deploy-to-rotate-basics
     file: alpha-rotato/tasks/rotate-deploy.yml
@@ -391,6 +461,10 @@ jobs:
 - name: rotate-cas-p3
   plan: 
   - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - deploy-to-rotate-part2
+  - get: auto-rotate-all
     trigger: true
     passed: 
     - deploy-to-rotate-part2
@@ -414,6 +488,10 @@ jobs:
 - name: deploy-to-rotate-part3
   plan: 
   - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - rotate-cas-p3
+  - get: auto-rotate-all
     trigger: true
     passed: 
     - rotate-cas-p3
