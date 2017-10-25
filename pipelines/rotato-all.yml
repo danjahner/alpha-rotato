@@ -437,6 +437,26 @@ jobs:
       KEYS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/diego_bbs_encryption_keys_passphrase"
 
+- name: remove-old-mysql-users
+  plan: 
+  - get: manual-rotate-all
+    trigger: true
+    passed: 
+    - deploy-to-rotate-part1
+  - get: auto-rotate-all
+    trigger: true
+    passed: 
+    - deploy-to-rotate-part1
+  - get: alpha-rotato
+  - task: revoke-old-mysql-users
+    file: alpha-rotato/tasks/revoke-users.yml
+    params:
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: ((/dan_director/cf/cf_mysql_mysql_admin_password))
+      MYSQL_HOST: mysql.((system_domain))
+      USERS_TO_REVOKE_PRIOR:
+      - "/((director_name))/((deployment_name))/"
+
 - name: deploy-to-rotate-part2
   plan: 
   - get: manual-rotate-all
@@ -446,6 +466,7 @@ jobs:
     - rotate-consul-p2
     - rotate-jwt-keys-p2
     - rotate-bbs-keys-p2
+    - remove-old-mysql-users
   - get: auto-rotate-all
     trigger: true
     passed: 
@@ -453,6 +474,7 @@ jobs:
     - rotate-consul-p2
     - rotate-jwt-keys-p2
     - rotate-bbs-keys-p2
+    - remove-old-mysql-users
   - get: alpha-rotato
   - task: deploy-to-rotate-basics
     file: alpha-rotato/tasks/rotate-deploy.yml

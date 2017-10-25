@@ -1,0 +1,19 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: pcfseceng/credhub
+
+inputs:
+- name: alpha-rotato
+
+run:
+  path: alpha-rotato/tasks/revoke-users.sh
+
+params:
+  MYSQL_USERNAME:
+  MYSQL_PASSWORD:
+  MYSQL_HOST:
+  USERS_TO_REVOKE_PRIOR:
+
