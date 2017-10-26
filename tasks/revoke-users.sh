@@ -3,6 +3,7 @@
 set -e
 
 echo "$BOSH_JUMPBOX_SSH_KEY" > jump.pem
+CREDHUB_CA_CERT="$BOSH_CA_CERT"
 chmod 400 jump.pem
 
 credhub l
