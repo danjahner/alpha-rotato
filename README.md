@@ -18,7 +18,7 @@ List based on cf-deployment at commit [98c1a7](https://github.com/cloudfoundry/c
 | cc_bridge_tps                                         | [Single Deploy][1] | Probably No  |
 | cc_bulk_api_password                                  | [Single Deploy][1] | Probably Yes |
 | cc_database                                           | [New User][2]      | Probably No  |
-| cc_db_encryption_key                                  | [None][99]         | N/A          |
+| cc_db_encryption_key                                  | [None Yet][99]         | N/A          |
 | cc_internal_api_password                              | [Single Deploy][1] | Probably Yes |
 | cc_staging_upload_password                            | [Single Deploy][1] | Probably Yes |
 | cc_tls                                                | [Single Deploy][1] | Probably No  |
@@ -91,7 +91,7 @@ List based on cf-deployment at commit [98c1a7](https://github.com/cloudfoundry/c
 [2]:#new-user
 [3]:#two-stage
 [4]:#three-stage
-[99]:#none
+[99]:https://www.pivotaltracker.com/n/projects/966314/stories/150312752
 
 ### Rotation Methods
 
@@ -110,7 +110,3 @@ This method provides a gradual rotation where step 1 adds a new value and step t
 #### Three Stage
 
 This method mostly applies to CA certificate rotation. Step 1 provides an additional trusted CA, step 2 provides new certificates based on that CA, step 3 removes the prior CA from trust.
-
-#### None
-
-This credential cannot be rotated. Period. :(
