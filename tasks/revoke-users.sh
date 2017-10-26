@@ -3,6 +3,7 @@
 set -e
 
 echo "$BOSH_JUMPBOX_SSH_KEY" > jump.pem
+chmod 400 jump.pem
 
 echo $USERS_TO_REVOKE_PRIOR | jq -r .[] | while read object; do
   # MySQL is not exposed publically, so we need to use BOSH SSH to send the mysql command
