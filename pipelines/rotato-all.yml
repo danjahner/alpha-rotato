@@ -380,7 +380,7 @@ jobs:
     - rotate-bbs-keys-p1
   - get: alpha-rotato
   - task: deploy-to-rotate-basics
-    file: alpha-rotato/tasks/rotate-deploy.yml
+    file: alpha-rotato/tasks/deploy.yml
     params: *deploy_config
 
 - name: rotate-cas-p2
@@ -534,7 +534,7 @@ jobs:
     - remove-old-mysql-users
   - get: alpha-rotato
   - task: deploy-to-rotate-basics
-    file: alpha-rotato/tasks/rotate-deploy.yml
+    file: alpha-rotato/tasks/deploy.yml
     params: *deploy_config
 
 - name: rotate-cas-p3
@@ -578,6 +578,6 @@ jobs:
     - rotate-cas-p3
   - get: alpha-rotato
   - task: deploy-to-rotate-basics
-    file: alpha-rotato/tasks/rotate-deploy.yml
+    file: alpha-rotato/tasks/deploy.yml
     params: *deploy_config
 

@@ -323,7 +323,7 @@ jobs:
     - rotate-mysql-secrets
   - get: alpha-rotato
   - task: deploy-to-rotate-basics
-    file: alpha-rotato/tasks/rotate-deploy.yml
+    file: alpha-rotato/tasks/deploy.yml
     params: *deploy_config
 
 - name: manual-rotate-cas
@@ -364,7 +364,7 @@ jobs:
     - rotate-cas-p1
   - get: alpha-rotato
   - task: deploy-to-rotate
-    file: alpha-rotato/tasks/rotate-deploy.yml
+    file: alpha-rotato/tasks/deploy.yml
     params: *deploy_config
 
 - name: rotate-cas-p2
@@ -400,7 +400,7 @@ jobs:
     - rotate-cas-p2
   - get: alpha-rotato
   - task: deploy-to-rotate
-    file: alpha-rotato/tasks/rotate-deploy.yml
+    file: alpha-rotato/tasks/deploy.yml
     params: *deploy_config
 
 - name: rotate-cas-p3
@@ -436,7 +436,7 @@ jobs:
     - rotate-cas-p3
   - get: alpha-rotato
   - task: deploy-to-rotate
-    file: alpha-rotato/tasks/rotate-deploy.yml
+    file: alpha-rotato/tasks/deploy.yml
     params: *deploy_config
 
 - name: manual-rotate-consul-keys
@@ -471,7 +471,7 @@ jobs:
     - rotate-consul-p1
   - get: alpha-rotato
   - task: deploy-to-rotate
-    file: alpha-rotato/tasks/rotate-deploy.yml
+    file: alpha-rotato/tasks/deploy.yml
     params: *deploy_config
 
 - name: rotate-consul-p2
@@ -501,7 +501,7 @@ jobs:
     - rotate-consul-p2
   - get: alpha-rotato
   - task: deploy-to-rotate
-    file: alpha-rotato/tasks/rotate-deploy.yml
+    file: alpha-rotato/tasks/deploy.yml
     params: *deploy_config
 
 - name: manual-rotate-jwt-keys
@@ -536,7 +536,7 @@ jobs:
     - rotate-jwt-keys-p1
   - get: alpha-rotato
   - task: deploy-to-rotate
-    file: alpha-rotato/tasks/rotate-deploy.yml
+    file: alpha-rotato/tasks/deploy.yml
     params: *deploy_config
 
 - name: rotate-jwt-keys-p2
@@ -566,7 +566,7 @@ jobs:
     - rotate-jwt-keys-p2
   - get: alpha-rotato
   - task: deploy-to-rotate
-    file: alpha-rotato/tasks/rotate-deploy.yml
+    file: alpha-rotato/tasks/deploy.yml
     params: *deploy_config
 
 - name: manual-rotate-bbs-keys
@@ -601,7 +601,7 @@ jobs:
     - rotate-bbs-keys-p1
   - get: alpha-rotato
   - task: deploy-to-rotate
-    file: alpha-rotato/tasks/rotate-deploy.yml
+    file: alpha-rotato/tasks/deploy.yml
     params: *deploy_config
 
 - name: rotate-bbs-keys-p2
@@ -631,7 +631,7 @@ jobs:
     - rotate-bbs-keys-p2
   - get: alpha-rotato
   - task: deploy-to-rotate
-    file: alpha-rotato/tasks/rotate-deploy.yml
+    file: alpha-rotato/tasks/deploy.yml
     params: *deploy_config
 
 - name: manual-rotate-db-users
@@ -672,7 +672,7 @@ jobs:
     - rotate-db-users-p1
   - get: alpha-rotato
   - task: deploy-to-rotate
-    file: alpha-rotato/tasks/rotate-deploy.yml
+    file: alpha-rotato/tasks/deploy.yml
     params: *deploy_config
 
 - name: rotate-db-users-p2
