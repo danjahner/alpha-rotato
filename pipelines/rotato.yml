@@ -1,10 +1,20 @@
+# This pipeline provides the ability to manually trigger rotation of certain credentials in cf-deployment.
+#
+# Variables Needed--
+#  director_addr        : The address of your cf-deployment bosh director
+#  director_client      : Client credentials used to authenticate with the bosh director and CredHub. Must be stored as a user type.
+#  director_ca          : The CA to trust when connecting to the bosh director
+#  director_name        : The name of your bosh director
+#  deployment_name      : The name of your cf-deployment
+#  director_jumpbox     : SSH private key for jumpbox to allow bosh SSH
+
 properties: 
   deploy_config: &deploy_config 
-    BOSH_ENVIRONMENT: ((director-addr))
+    BOSH_ENVIRONMENT: ((director_addr))
     BOSH_DEPLOYMENT: ((deployment_name))
-    BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
-    BOSH_CLIENT: ((dan_director_client.username))
-    BOSH_CLIENT_SECRET: ((dan_director_client.password))
+    BOSH_CA_CERT: ((director_ca.certificate))
+    BOSH_CLIENT: ((director_client.username))
+    BOSH_CLIENT_SECRET: ((director_client.password))
 
 groups: 
 - name: basic-credentials
@@ -110,10 +120,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-certificates-by-ca.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       SIGNED_BY_TO_ROTATE:
       - "/((director_name))/((deployment_name))/uaa_ca"
       - "/((director_name))/((deployment_name))/router_ca"
@@ -133,10 +143,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       CREDS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/uaa_clients_tcp_router_secret"
       - "/((director_name))/((deployment_name))/uaa_clients_tcp_emitter_secret"
@@ -162,10 +172,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       CREDS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/nats_password"
 
@@ -179,10 +189,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       CREDS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/diego_ssh_proxy_host_key"
 
@@ -196,10 +206,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       CREDS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/router_route_services_secret"
       - "/((director_name))/((deployment_name))/router_status_password"
@@ -214,10 +224,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       CREDS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/cc_bulk_api_password"
       - "/((director_name))/((deployment_name))/cc_staging_upload_password"
@@ -233,10 +243,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       CREDS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/blobstore_secure_link_secret"
       - "/((director_name))/((deployment_name))/blobstore_admin_users_password"
@@ -251,10 +261,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       CREDS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/dropsonde_shared_secret"
 
@@ -268,10 +278,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-credentials.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       CREDS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/cf_mysql_mysql_admin_password"
       - "/((director_name))/((deployment_name))/cf_mysql_mysql_cluster_health_password"
@@ -313,10 +323,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-cas-part1.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       CAS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/uaa_ca"
       - "/((director_name))/((deployment_name))/router_ca"
@@ -347,10 +357,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-certificates-by-ca.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       SIGNED_BY_TO_ROTATE:
       - "/((director_name))/((deployment_name))/uaa_ca"
       - "/((director_name))/((deployment_name))/router_ca"
@@ -381,10 +391,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-cas-part3.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       CAS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/uaa_ca"
       - "/((director_name))/((deployment_name))/router_ca"
@@ -420,10 +430,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-consul-keys-part1.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       KEYS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/consul_encrypt_key"
 
@@ -448,10 +458,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-consul-keys-part2.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       KEYS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/consul_encrypt_key"
 
@@ -481,10 +491,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-jwt-keys-part1.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       KEYS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/uaa_jwt_signing_key"
 
@@ -509,10 +519,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-jwt-keys-part2.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       KEYS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/uaa_jwt_signing_key"
 
@@ -542,10 +552,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-bbs-keys-part1.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       KEYS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/diego_bbs_encryption_keys_passphrase"
 
@@ -570,10 +580,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/rotate-bbs-keys-part2.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       KEYS_TO_ROTATE:
       - "/((director_name))/((deployment_name))/diego_bbs_encryption_keys_passphrase"
 
@@ -603,10 +613,10 @@ jobs:
   - task: rotate-credential
     file: alpha-rotato/tasks/generate-users.yml
     params:
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
-      CREDHUB_CA_CERT: ((dan_director_gcp_ca.certificate))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
+      CREDHUB_CA_CERT: ((director_ca.certificate))
       USERS_TO_GENERATE:
       - "/((director_name))/((deployment_name))/cc_database"
       - "/((director_name))/((deployment_name))/diego_database"
@@ -637,15 +647,15 @@ jobs:
   - task: revoke-old-mysql-users
     file: alpha-rotato/tasks/revoke-users.yml
     params:
-      BOSH_ENVIRONMENT: ((director-addr))
+      BOSH_ENVIRONMENT: ((director_addr))
       BOSH_DEPLOYMENT: ((deployment_name))
-      BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
-      BOSH_CLIENT: ((dan_director_client.username))
-      BOSH_CLIENT_SECRET: ((dan_director_client.password))
-      BOSH_JUMPBOX_SSH_KEY: ((dan_director_jumpbox.private_key))
-      CREDHUB_SERVER: ((director-addr)):8844
-      CREDHUB_CLIENT: ((dan_director_client.username))
-      CREDHUB_SECRET: ((dan_director_client.password))
+      BOSH_CA_CERT: ((director_ca.certificate))
+      BOSH_CLIENT: ((director_client.username))
+      BOSH_CLIENT_SECRET: ((director_client.password))
+      BOSH_JUMPBOX_SSH_KEY: ((director_jumpbox.private_key))
+      CREDHUB_SERVER: ((director_addr)):8844
+      CREDHUB_CLIENT: ((director_client.username))
+      CREDHUB_SECRET: ((director_client.password))
       MYSQL_USERNAME: root
       MYSQL_PASSWORD_REF: "/((director_name))/((deployment_name))/cf_mysql_mysql_admin_password"
       USERS_TO_REVOKE_PRIOR:
