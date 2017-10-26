@@ -12,8 +12,11 @@ run:
   path: alpha-rotato/tasks/revoke-users.sh
 
 params:
+  BOSH_ENVIRONMENT:
+  BOSH_DEPLOYMENT:
+  BOSH_CA_CERT:
+  BOSH_JUMPBOX_SSH_KEY:
   MYSQL_USERNAME:
   MYSQL_PASSWORD:
-  MYSQL_HOST:
   USERS_TO_REVOKE_PRIOR:
 

@@ -451,9 +451,12 @@ jobs:
   - task: revoke-old-mysql-users
     file: alpha-rotato/tasks/revoke-users.yml
     params:
+      BOSH_ENVIRONMENT: ((director-addr))
+      BOSH_DEPLOYMENT: ((deployment_name))
+      BOSH_CA_CERT: ((dan_director_gcp_ca.certificate))
+      BOSH_JUMPBOX_SSH_KEY: ((dan_director_jumpbox.private_key))
       MYSQL_USERNAME: root
       MYSQL_PASSWORD: ((/dan_director/cf/cf_mysql_mysql_admin_password))
-      MYSQL_HOST: mysql.((system_domain))
       USERS_TO_REVOKE_PRIOR:
       - "/((director_name))/((deployment_name))/"
 
