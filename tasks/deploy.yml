@@ -9,7 +9,7 @@ inputs:
 - name: alpha-rotato
 
 run:
-  path: alpha-rotato/tasks/rotate-deploy.sh
+  path: alpha-rotato/tasks/deploy.sh
 
 params:
   BOSH_ENVIRONMENT:
