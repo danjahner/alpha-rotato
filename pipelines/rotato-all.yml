@@ -55,20 +55,22 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       CREDS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/uaa_clients_tcp_router_secret"
-      - "/((director_name))/((deployment_name))/uaa_clients_tcp_emitter_secret"
-      - "/((director_name))/((deployment_name))/uaa_clients_ssh-proxy_secret"
-      - "/((director_name))/((deployment_name))/uaa_clients_gorouter_secret"
-      - "/((director_name))/((deployment_name))/uaa_clients_doppler_secret"
-      - "/((director_name))/((deployment_name))/uaa_clients_cloud_controller_username_lookup_secret"
-      - "/((director_name))/((deployment_name))/uaa_clients_cc-service-dashboards_secret"
-      - "/((director_name))/((deployment_name))/uaa_clients_cc-routing_secret"
-      - "/((director_name))/((deployment_name))/uaa_clients_network_policy_secret"
-      - "/((director_name))/((deployment_name))/uaa_clients_cc_service_key_client_secret"
-      - "/((director_name))/((deployment_name))/uaa_clients_routing_api_client_secret"
-      - "/((director_name))/((deployment_name))/uaa_admin_client_secret"
-      - "/((director_name))/((deployment_name))/cf_admin_password"
+      - "uaa_clients_tcp_router_secret"
+      - "uaa_clients_tcp_emitter_secret"
+      - "uaa_clients_ssh-proxy_secret"
+      - "uaa_clients_gorouter_secret"
+      - "uaa_clients_doppler_secret"
+      - "uaa_clients_cloud_controller_username_lookup_secret"
+      - "uaa_clients_cc-service-dashboards_secret"
+      - "uaa_clients_cc-routing_secret"
+      - "uaa_clients_network_policy_secret"
+      - "uaa_clients_cc_service_key_client_secret"
+      - "uaa_clients_routing_api_client_secret"
+      - "uaa_admin_client_secret"
+      - "cf_admin_password"
 
 - name: rotate-nats-password
   plan: 
@@ -86,8 +88,10 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       CREDS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/nats_password"
+      - "nats_password"
 
 - name: rotate-diego-ssh-host-key
   plan: 
@@ -105,8 +109,10 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       CREDS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/diego_ssh_proxy_host_key"
+      - "diego_ssh_proxy_host_key"
 
 - name: rotate-router-secrets
   plan: 
@@ -124,9 +130,11 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       CREDS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/router_route_services_secret"
-      - "/((director_name))/((deployment_name))/router_status_password"
+      - "router_route_services_secret"
+      - "router_status_password"
 
 - name: rotate-cc-secrets
   plan: 
@@ -144,10 +152,12 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       CREDS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/cc_bulk_api_password"
-      - "/((director_name))/((deployment_name))/cc_staging_upload_password"
-      - "/((director_name))/((deployment_name))/cc_internal_api_password"
+      - "cc_bulk_api_password"
+      - "cc_staging_upload_password"
+      - "cc_internal_api_password"
 
 - name: rotate-blobstore-secrets
   plan: 
@@ -165,9 +175,11 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       CREDS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/blobstore_secure_link_secret"
-      - "/((director_name))/((deployment_name))/blobstore_admin_users_password"
+      - "blobstore_secure_link_secret"
+      - "blobstore_admin_users_password"
 
 - name: rotate-dropsonde-secret
   plan: 
@@ -185,8 +197,10 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       CREDS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/dropsonde_shared_secret"
+      - "dropsonde_shared_secret"
 
 - name: rotate-mysql-secrets
   plan: 
@@ -204,12 +218,14 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       CREDS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/cf_mysql_mysql_admin_password"
-      - "/((director_name))/((deployment_name))/cf_mysql_mysql_cluster_health_password"
-      - "/((director_name))/((deployment_name))/cf_mysql_mysql_galera_healthcheck_endpoint_password"
-      - "/((director_name))/((deployment_name))/cf_mysql_mysql_galera_healthcheck_password"
-      - "/((director_name))/((deployment_name))/cf_mysql_proxy_api_password"
+      - "cf_mysql_mysql_admin_password"
+      - "cf_mysql_mysql_cluster_health_password"
+      - "cf_mysql_mysql_galera_healthcheck_endpoint_password"
+      - "cf_mysql_mysql_galera_healthcheck_password"
+      - "cf_mysql_proxy_api_password"
 
 - name: rotate-database-users
   plan: 
@@ -227,14 +243,16 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       USERS_TO_GENERATE:
-      - "/((director_name))/((deployment_name))/cc_database"
-      - "/((director_name))/((deployment_name))/diego_database"
-      - "/((director_name))/((deployment_name))/network_connectivity_database"
-      - "/((director_name))/((deployment_name))/network_policy_database"
-      - "/((director_name))/((deployment_name))/routing_api_database"
-      - "/((director_name))/((deployment_name))/uaa_database"
-      - "/((director_name))/((deployment_name))/locket_database"
+      - "cc_database"
+      - "diego_database"
+      - "network_connectivity_database"
+      - "network_policy_database"
+      - "routing_api_database"
+      - "uaa_database"
+      - "locket_database"
 
 - name: rotate-cas-p1
   plan: 
@@ -252,14 +270,16 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       CAS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/uaa_ca"
-      - "/((director_name))/((deployment_name))/router_ca"
-      - "/((director_name))/((deployment_name))/loggregator_ca"
-      - "/((director_name))/((deployment_name))/consul_agent_ca"
-      - "/((director_name))/((deployment_name))/service_cf_internal_ca"
-      - "/((director_name))/((deployment_name))/network_policy_ca"
-      - "/((director_name))/((deployment_name))/silk_ca"
+      - "uaa_ca"
+      - "router_ca"
+      - "loggregator_ca"
+      - "consul_agent_ca"
+      - "service_cf_internal_ca"
+      - "network_policy_ca"
+      - "silk_ca"
 
 - name: rotate-consul-p1
   plan: 
@@ -277,8 +297,10 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       KEYS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/consul_encrypt_key"
+      - "consul_encrypt_key"
 
 - name: rotate-jwt-keys-p1
   plan: 
@@ -296,8 +318,10 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       KEYS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/uaa_jwt_signing_key"
+      - "uaa_jwt_signing_key"
 
 - name: rotate-bbs-keys-p1
   plan: 
@@ -315,8 +339,10 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       KEYS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/diego_bbs_encryption_keys_passphrase"
+      - "diego_bbs_encryption_keys_passphrase"
 
 - name: deploy-to-rotate-part1
   plan: 
@@ -375,14 +401,16 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       SIGNED_BY_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/uaa_ca"
-      - "/((director_name))/((deployment_name))/router_ca"
-      - "/((director_name))/((deployment_name))/loggregator_ca"
-      - "/((director_name))/((deployment_name))/consul_agent_ca"
-      - "/((director_name))/((deployment_name))/service_cf_internal_ca"
-      - "/((director_name))/((deployment_name))/network_policy_ca"
-      - "/((director_name))/((deployment_name))/silk_ca"
+      - "uaa_ca"
+      - "router_ca"
+      - "loggregator_ca"
+      - "consul_agent_ca"
+      - "service_cf_internal_ca"
+      - "network_policy_ca"
+      - "silk_ca"
 
 - name: rotate-consul-p2
   plan: 
@@ -402,8 +430,10 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       KEYS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/consul_encrypt_key"
+      - "consul_encrypt_key"
 
 - name: rotate-jwt-keys-p2
   plan: 
@@ -423,8 +453,10 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       KEYS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/uaa_jwt_signing_key"
+      - "uaa_jwt_signing_key"
 
 - name: rotate-bbs-keys-p2
   plan: 
@@ -444,8 +476,10 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       KEYS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/diego_bbs_encryption_keys_passphrase"
+      - "diego_bbs_encryption_keys_passphrase"
 
 - name: remove-old-mysql-users
   plan: 
@@ -469,14 +503,16 @@ jobs:
       BOSH_JUMPBOX_SSH_KEY: ((director_jumpbox.private_key))
       MYSQL_USERNAME: root
       MYSQL_PASSWORD_REF: "/((director_name))/((deployment_name))/cf_mysql_mysql_admin_password"
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       USERS_TO_REVOKE_PRIOR:
-      - "/((director_name))/((deployment_name))/cc_database"
-      - "/((director_name))/((deployment_name))/diego_database"
-      - "/((director_name))/((deployment_name))/network_connectivity_database"
-      - "/((director_name))/((deployment_name))/network_policy_database"
-      - "/((director_name))/((deployment_name))/routing_api_database"
-      - "/((director_name))/((deployment_name))/uaa_database"
-      - "/((director_name))/((deployment_name))/locket_database"
+      - "cc_database"
+      - "diego_database"
+      - "network_connectivity_database"
+      - "network_policy_database"
+      - "routing_api_database"
+      - "uaa_database"
+      - "locket_database"
 
 - name: deploy-to-rotate-part2
   plan: 
@@ -519,14 +555,16 @@ jobs:
       CREDHUB_CLIENT: ((director_client.username))
       CREDHUB_SECRET: ((director_client.password))
       CREDHUB_CA_CERT: ((director_ca.certificate))
+      BOSH_NAME: ((director_name))
+      BOSH_DEPLOYMENT: ((deployment_name))
       CAS_TO_ROTATE:
-      - "/((director_name))/((deployment_name))/uaa_ca"
-      - "/((director_name))/((deployment_name))/router_ca"
-      - "/((director_name))/((deployment_name))/loggregator_ca"
-      - "/((director_name))/((deployment_name))/consul_agent_ca"
-      - "/((director_name))/((deployment_name))/service_cf_internal_ca"
-      - "/((director_name))/((deployment_name))/network_policy_ca"
-      - "/((director_name))/((deployment_name))/silk_ca"
+      - "uaa_ca"
+      - "router_ca"
+      - "loggregator_ca"
+      - "consul_agent_ca"
+      - "service_cf_internal_ca"
+      - "network_policy_ca"
+      - "silk_ca"
 
 - name: deploy-to-rotate-part3
   plan: 

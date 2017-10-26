@@ -13,6 +13,11 @@ credhub l
 mysqladmin="$(credhub g -n ${MYSQL_PASSWORD_REF} --output-json | jq -r .value)"
 
 echo $USERS_TO_REVOKE_PRIOR | jq -r .[] | while read object; do
+  # Namespace with director and deployment name if no leading slash
+  if [ ! "$(echo $object | head -c 1)" == "/" ]
+    object="/${BOSH_NAME}/${BOSH_DEPLOYMENT}/${object}"
+  fi
+
   # MySQL is not exposed publically, so we need to use BOSH SSH to send the mysql command
   user="$(credhub g -n $object --versions 2 --output-json | jq -r .versions[1].value.username)"
 

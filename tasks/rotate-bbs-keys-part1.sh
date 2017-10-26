@@ -5,6 +5,11 @@ set -e
 credhub l 
 
 echo $KEYS_TO_ROTATE | jq -r .[] | while read object; do
+  # Namespace with director and deployment name if no leading slash
+  if [ ! "$(echo $object | head -c 1)" == "/" ]
+    object="/${BOSH_NAME}/${BOSH_DEPLOYMENT}/${object}"
+  fi
+
   #BBS stores the label of the encryption key, so we cannot just move the old key from label 'active-key' to 'inactive-key'
   #We must set the active key name in a variable and track it in the rotation
   OLDKEYNAME="$(credhub g -n ${object}_name --output-json | jq -r .value)"
