@@ -653,9 +653,6 @@ jobs:
       BOSH_CLIENT: ((director_client.username))
       BOSH_CLIENT_SECRET: ((director_client.password))
       BOSH_JUMPBOX_SSH_KEY: ((director_jumpbox.private_key))
-      CREDHUB_SERVER: ((director_addr)):8844
-      CREDHUB_CLIENT: ((director_client.username))
-      CREDHUB_SECRET: ((director_client.password))
       MYSQL_USERNAME: root
       MYSQL_PASSWORD_REF: "/((director_name))/((deployment_name))/cf_mysql_mysql_admin_password"
       USERS_TO_REVOKE_PRIOR:
