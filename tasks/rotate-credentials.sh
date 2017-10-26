@@ -6,7 +6,7 @@ credhub l
 
 echo $CREDS_TO_ROTATE | jq -r .[] | while read object; do
   # Namespace with director and deployment name if no leading slash
-  if [ ! "$(echo $object | head -c 1)" == "/" ]
+  if [ ! "$(echo $object | head -c 1)" == "/" ]; then
     object="/${BOSH_NAME}/${BOSH_DEPLOYMENT}/${object}"
   fi
 

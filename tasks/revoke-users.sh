@@ -14,7 +14,7 @@ mysqladmin="$(credhub g -n ${MYSQL_PASSWORD_REF} --output-json | jq -r .value)"
 
 echo $USERS_TO_REVOKE_PRIOR | jq -r .[] | while read object; do
   # Namespace with director and deployment name if no leading slash
-  if [ ! "$(echo $object | head -c 1)" == "/" ]
+  if [ ! "$(echo $object | head -c 1)" == "/" ]; then
     object="/${BOSH_NAME}/${BOSH_DEPLOYMENT}/${object}"
   fi
 
