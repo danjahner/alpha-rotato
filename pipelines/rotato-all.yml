@@ -461,9 +461,15 @@ jobs:
       CREDHUB_CLIENT: ((dan_director_client.username))
       CREDHUB_SECRET: ((dan_director_client.password))
       MYSQL_USERNAME: root
-      MYSQL_PASSWORD: ((/dan_director/cf/cf_mysql_mysql_admin_password))
+      MYSQL_PASSWORD_REF: "/((director_name))/((deployment_name))/cf_mysql_mysql_admin_password"
       USERS_TO_REVOKE_PRIOR:
-      - "/((director_name))/((deployment_name))/"
+      - "/((director_name))/((deployment_name))/cc_database"
+      - "/((director_name))/((deployment_name))/diego_database"
+      - "/((director_name))/((deployment_name))/network_connectivity_database"
+      - "/((director_name))/((deployment_name))/network_policy_database"
+      - "/((director_name))/((deployment_name))/routing_api_database"
+      - "/((director_name))/((deployment_name))/uaa_database"
+      - "/((director_name))/((deployment_name))/locket_database"
 
 - name: deploy-to-rotate-part2
   plan: 
